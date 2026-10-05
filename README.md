@@ -20,6 +20,11 @@
 
 - 英文版（結構參考）：[lazycat-english](https://github.com/jansonlau0126/lazycat-english)
 - 產品決策詳見 [`PRODUCT.md`](./PRODUCT.md)
+- 設計：[`docs/DESIGN.md`](./docs/DESIGN.md)
+- 第一期字表：[`docs/CHARACTERS_PHASE1.md`](./docs/CHARACTERS_PHASE1.md)
+- 筆順：[`docs/STROKE_ORDER.md`](./docs/STROKE_ORDER.md)
+- 粵語讀音及音檔：[`docs/CANTONESE.md`](./docs/CANTONESE.md)
+- 素材：`assets/`（106 張 WebP + `manifest.json`）為 **AI 生成草稿**，待換真實相片
 
 ## 狀態
 

@@ -1,0 +1,326 @@
+{
+  "draft": true,
+  "source": "AI-generated draft",
+  "format": {
+    "type": "webp",
+    "width": 800,
+    "height": 450
+  },
+  "poses": [
+    "sit",
+    "sleep",
+    "stretch",
+    "happy",
+    "act-a",
+    "act-b",
+    "ball"
+  ],
+  "hero": {
+    "path": "assets/hero/hero-maomao-notebook.webp",
+    "dog": "01-maomao-toy-poodle",
+    "draft": true,
+    "source": "AI-generated draft"
+  },
+  "dogs": [
+    {
+      "num": 1,
+      "slug": "01-maomao-toy-poodle",
+      "name": "毛毛",
+      "breed": {
+        "zh": "玩具貴賓犬（杏色）",
+        "en": "Toy Poodle (apricot)"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/01-maomao-toy-poodle.webp",
+        "sleep": "assets/poses/01-maomao-toy-poodle-sleep.webp",
+        "stretch": "assets/poses/01-maomao-toy-poodle-stretch.webp",
+        "happy": "assets/poses/01-maomao-toy-poodle-happy.webp",
+        "act-a": "assets/poses/01-maomao-toy-poodle-act-a.webp",
+        "act-b": "assets/poses/01-maomao-toy-poodle-act-b.webp",
+        "ball": "assets/poses/01-maomao-toy-poodle-ball.webp"
+      }
+    },
+    {
+      "num": 2,
+      "slug": "02-bobo-shiba",
+      "name": "波波",
+      "breed": {
+        "zh": "柴犬",
+        "en": "Shiba Inu (red)"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/02-bobo-shiba.webp",
+        "sleep": "assets/poses/02-bobo-shiba-sleep.webp",
+        "stretch": "assets/poses/02-bobo-shiba-stretch.webp",
+        "happy": "assets/poses/02-bobo-shiba-happy.webp",
+        "act-a": "assets/poses/02-bobo-shiba-act-a.webp",
+        "act-b": "assets/poses/02-bobo-shiba-act-b.webp",
+        "ball": "assets/poses/02-bobo-shiba-ball.webp"
+      }
+    },
+    {
+      "num": 3,
+      "slug": "03-duoduo-corgi",
+      "name": "多多",
+      "breed": {
+        "zh": "柯基犬",
+        "en": "Pembroke Welsh Corgi"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/03-duoduo-corgi.webp",
+        "sleep": "assets/poses/03-duoduo-corgi-sleep.webp",
+        "stretch": "assets/poses/03-duoduo-corgi-stretch.webp",
+        "happy": "assets/poses/03-duoduo-corgi-happy.webp",
+        "act-a": "assets/poses/03-duoduo-corgi-act-a.webp",
+        "act-b": "assets/poses/03-duoduo-corgi-act-b.webp",
+        "ball": "assets/poses/03-duoduo-corgi-ball.webp"
+      }
+    },
+    {
+      "num": 4,
+      "slug": "04-doudou-dachshund",
+      "name": "豆豆",
+      "breed": {
+        "zh": "臘腸犬（朱古力色）",
+        "en": "Dachshund (chocolate)"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/04-doudou-dachshund.webp",
+        "sleep": "assets/poses/04-doudou-dachshund-sleep.webp",
+        "stretch": "assets/poses/04-doudou-dachshund-stretch.webp",
+        "happy": "assets/poses/04-doudou-dachshund-happy.webp",
+        "act-a": "assets/poses/04-doudou-dachshund-act-a.webp",
+        "act-b": "assets/poses/04-doudou-dachshund-act-b.webp",
+        "ball": "assets/poses/04-doudou-dachshund-ball.webp"
+      }
+    },
+    {
+      "num": 5,
+      "slug": "05-baibai-bichon",
+      "name": "白白",
+      "breed": {
+        "zh": "比熊犬",
+        "en": "Bichon Frise"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/05-baibai-bichon.webp",
+        "sleep": "assets/poses/05-baibai-bichon-sleep.webp",
+        "stretch": "assets/poses/05-baibai-bichon-stretch.webp",
+        "happy": "assets/poses/05-baibai-bichon-happy.webp",
+        "act-a": "assets/poses/05-baibai-bichon-act-a.webp",
+        "act-b": "assets/poses/05-baibai-bichon-act-b.webp",
+        "ball": "assets/poses/05-baibai-bichon-ball.webp"
+      }
+    },
+    {
+      "num": 6,
+      "slug": "06-jinjin-golden-retriever",
+      "name": "金金",
+      "breed": {
+        "zh": "金毛尋回犬",
+        "en": "Golden Retriever"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/06-jinjin-golden-retriever.webp",
+        "sleep": "assets/poses/06-jinjin-golden-retriever-sleep.webp",
+        "stretch": "assets/poses/06-jinjin-golden-retriever-stretch.webp",
+        "happy": "assets/poses/06-jinjin-golden-retriever-happy.webp",
+        "act-a": "assets/poses/06-jinjin-golden-retriever-act-a.webp",
+        "act-b": "assets/poses/06-jinjin-golden-retriever-act-b.webp",
+        "ball": "assets/poses/06-jinjin-golden-retriever-ball.webp"
+      }
+    },
+    {
+      "num": 7,
+      "slug": "07-heitang-labrador",
+      "name": "黑糖",
+      "breed": {
+        "zh": "拉布拉多犬（朱古力色）",
+        "en": "Labrador Retriever (chocolate)"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/07-heitang-labrador.webp",
+        "sleep": "assets/poses/07-heitang-labrador-sleep.webp",
+        "stretch": "assets/poses/07-heitang-labrador-stretch.webp",
+        "happy": "assets/poses/07-heitang-labrador-happy.webp",
+        "act-a": "assets/poses/07-heitang-labrador-act-a.webp",
+        "act-b": "assets/poses/07-heitang-labrador-act-b.webp",
+        "ball": "assets/poses/07-heitang-labrador-ball.webp"
+      }
+    },
+    {
+      "num": 8,
+      "slug": "08-qiuqiu-old-english-sheepdog",
+      "name": "球球",
+      "breed": {
+        "zh": "古代牧羊犬",
+        "en": "Old English Sheepdog"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/08-qiuqiu-old-english-sheepdog.webp",
+        "sleep": "assets/poses/08-qiuqiu-old-english-sheepdog-sleep.webp",
+        "stretch": "assets/poses/08-qiuqiu-old-english-sheepdog-stretch.webp",
+        "happy": "assets/poses/08-qiuqiu-old-english-sheepdog-happy.webp",
+        "act-a": "assets/poses/08-qiuqiu-old-english-sheepdog-act-a.webp",
+        "act-b": "assets/poses/08-qiuqiu-old-english-sheepdog-act-b.webp",
+        "ball": "assets/poses/08-qiuqiu-old-english-sheepdog-ball.webp"
+      }
+    },
+    {
+      "num": 9,
+      "slug": "09-huihui-husky",
+      "name": "灰灰",
+      "breed": {
+        "zh": "哈士奇",
+        "en": "Siberian Husky"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/09-huihui-husky.webp",
+        "sleep": "assets/poses/09-huihui-husky-sleep.webp",
+        "stretch": "assets/poses/09-huihui-husky-stretch.webp",
+        "happy": "assets/poses/09-huihui-husky-happy.webp",
+        "act-a": "assets/poses/09-huihui-husky-act-a.webp",
+        "act-b": "assets/poses/09-huihui-husky-act-b.webp",
+        "ball": "assets/poses/09-huihui-husky-ball.webp"
+      }
+    },
+    {
+      "num": 10,
+      "slug": "10-yuanyuan-pug",
+      "name": "圓圓",
+      "breed": {
+        "zh": "八哥犬",
+        "en": "Pug"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/10-yuanyuan-pug.webp",
+        "sleep": "assets/poses/10-yuanyuan-pug-sleep.webp",
+        "stretch": "assets/poses/10-yuanyuan-pug-stretch.webp",
+        "happy": "assets/poses/10-yuanyuan-pug-happy.webp",
+        "act-a": "assets/poses/10-yuanyuan-pug-act-a.webp",
+        "act-b": "assets/poses/10-yuanyuan-pug-act-b.webp",
+        "ball": "assets/poses/10-yuanyuan-pug-ball.webp"
+      }
+    },
+    {
+      "num": 11,
+      "slug": "11-xuexue-samoyed",
+      "name": "雪雪",
+      "breed": {
+        "zh": "薩摩耶犬",
+        "en": "Samoyed"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/11-xuexue-samoyed.webp",
+        "sleep": "assets/poses/11-xuexue-samoyed-sleep.webp",
+        "stretch": "assets/poses/11-xuexue-samoyed-stretch.webp",
+        "happy": "assets/poses/11-xuexue-samoyed-happy.webp",
+        "act-a": "assets/poses/11-xuexue-samoyed-act-a.webp",
+        "act-b": "assets/poses/11-xuexue-samoyed-act-b.webp",
+        "ball": "assets/poses/11-xuexue-samoyed-ball.webp"
+      }
+    },
+    {
+      "num": 12,
+      "slug": "12-bengbeng-border-collie",
+      "name": "蹦蹦",
+      "breed": {
+        "zh": "邊境牧羊犬",
+        "en": "Border Collie"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/12-bengbeng-border-collie.webp",
+        "sleep": "assets/poses/12-bengbeng-border-collie-sleep.webp",
+        "stretch": "assets/poses/12-bengbeng-border-collie-stretch.webp",
+        "happy": "assets/poses/12-bengbeng-border-collie-happy.webp",
+        "act-a": "assets/poses/12-bengbeng-border-collie-act-a.webp",
+        "act-b": "assets/poses/12-bengbeng-border-collie-act-b.webp",
+        "ball": "assets/poses/12-bengbeng-border-collie-ball.webp"
+      }
+    },
+    {
+      "num": 13,
+      "slug": "13-pipi-french-bulldog",
+      "name": "皮皮",
+      "breed": {
+        "zh": "法國鬥牛犬",
+        "en": "French Bulldog"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/13-pipi-french-bulldog.webp",
+        "sleep": "assets/poses/13-pipi-french-bulldog-sleep.webp",
+        "stretch": "assets/poses/13-pipi-french-bulldog-stretch.webp",
+        "happy": "assets/poses/13-pipi-french-bulldog-happy.webp",
+        "act-a": "assets/poses/13-pipi-french-bulldog-act-a.webp",
+        "act-b": "assets/poses/13-pipi-french-bulldog-act-b.webp",
+        "ball": "assets/poses/13-pipi-french-bulldog-ball.webp"
+      }
+    },
+    {
+      "num": 14,
+      "slug": "14-tangtang-maltese",
+      "name": "糖糖",
+      "breed": {
+        "zh": "瑪爾濟斯犬",
+        "en": "Maltese"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/14-tangtang-maltese.webp",
+        "sleep": "assets/poses/14-tangtang-maltese-sleep.webp",
+        "stretch": "assets/poses/14-tangtang-maltese-stretch.webp",
+        "happy": "assets/poses/14-tangtang-maltese-happy.webp",
+        "act-a": "assets/poses/14-tangtang-maltese-act-a.webp",
+        "act-b": "assets/poses/14-tangtang-maltese-act-b.webp",
+        "ball": "assets/poses/14-tangtang-maltese-ball.webp"
+      }
+    },
+    {
+      "num": 15,
+      "slug": "15-dawang-akita",
+      "name": "大王",
+      "breed": {
+        "zh": "秋田犬",
+        "en": "Akita"
+      },
+      "draft": true,
+      "source": "AI-generated draft",
+      "poses": {
+        "sit": "assets/dogs/15-dawang-akita.webp",
+        "sleep": "assets/poses/15-dawang-akita-sleep.webp",
+        "stretch": "assets/poses/15-dawang-akita-stretch.webp",
+        "happy": "assets/poses/15-dawang-akita-happy.webp",
+        "act-a": "assets/poses/15-dawang-akita-act-a.webp",
+        "act-b": "assets/poses/15-dawang-akita-act-b.webp",
+        "ball": "assets/poses/15-dawang-akita-ball.webp"
+      }
+    }
+  ]
+}
