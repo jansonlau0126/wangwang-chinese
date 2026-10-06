@@ -26,7 +26,12 @@ function serveAssets() {
       });
     },
     closeBundle() {
-      cpSync(assetsDir, path.join(root, "dist", "assets"), { recursive: true });
+      const outDir = path.resolve(root, this.environment?.config?.build?.outDir || "dist");
+      // Vite 6: prefer config from plugin context when available
+    },
+    writeBundle(options) {
+      const outDir = options.dir || path.join(root, "dist");
+      cpSync(assetsDir, path.join(outDir, "assets"), { recursive: true });
     },
   };
 }

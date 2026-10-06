@@ -1,6 +1,7 @@
 import { dayChars, DAY_TOTAL, WEEK_TOTAL, characters, weekChars, weekOfDay } from "./chars.js";
 import { dailyPose, dogBySlug, dogs, heroSrc, poseSrc } from "./dogs.js";
 import { companionName, isCharUnlocked, isDayDone, recordList, tileStatus, unlockedCount } from "./state.js";
+import { unlockedDogCount } from "./strokeOrder.js";
 
 export const STAGES = [
   { id: "listen", label: "汪汪讀" },
@@ -31,19 +32,22 @@ export function esc(value) {
 }
 
 function iconHome() {
-  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1v-8.5Z" fill="currentColor"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.2 12 5.2l8 7V20a1.2 1.2 0 0 1-1.2 1.2H14v-5.2h-4v5.2H5.2A1.2 1.2 0 0 1 4 20v-7.8Z" fill="currentColor"/><circle cx="12" cy="3.6" r="1.4" fill="currentColor"/></svg>';
 }
 function iconMap() {
-  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5 9 4.5l6 2 5-2v13l-5 2-6-2-5 2V6.5Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 4.5v13M15 6.5v13" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8c2 0 3-2 5-2s3 2 5 2 3-2 5-2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 13c2 0 3-2 5-2s3 2 5 2 3-2 5-2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M4 18c2 0 3-2 5-2s3 2 5 2 3-2 5-2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="9" cy="11" r="1.6" fill="currentColor"/></svg>';
 }
 function iconCards() {
-  return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="12" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 5h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-8" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="11" height="15" rx="3" fill="currentColor" opacity="0.35"/><rect x="8" y="5.5" width="11" height="15" rx="3" fill="currentColor"/></svg>';
 }
 function iconPaw() {
-  return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="8" r="2" fill="currentColor"/><circle cx="12" cy="6.2" r="2" fill="currentColor"/><circle cx="17" cy="8" r="2" fill="currentColor"/><ellipse cx="12" cy="15.5" rx="4.2" ry="3.3" fill="currentColor"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="16" rx="5" ry="3.8" fill="currentColor"/><circle cx="6.2" cy="9.2" r="2.3" fill="currentColor"/><circle cx="12" cy="7" r="2.3" fill="currentColor"/><circle cx="17.8" cy="9.2" r="2.3" fill="currentColor"/></svg>';
 }
 function iconMe() {
-  return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="3.2" fill="currentColor"/><path d="M5.5 19.5c1.6-3.2 4-4.8 6.5-4.8s4.9 1.6 6.5 4.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+  return '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.6" fill="currentColor"/><path d="M5 19.5c1.5-3.4 3.9-5 7-5s5.5 1.6 7 5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>';
+}
+function iconSilhouette() {
+  return '<svg class="sil" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="16" rx="5" ry="3.8" fill="currentColor"/><circle cx="6.2" cy="9.2" r="2.3" fill="currentColor"/><circle cx="12" cy="7" r="2.3" fill="currentColor"/><circle cx="17.8" cy="9.2" r="2.3" fill="currentColor"/></svg>';
 }
 
 function statusLabel(status) {
@@ -114,7 +118,7 @@ export function renderHome(state) {
     <figure class="hero">
       <img src="${esc(heroSrc)}" alt="毛毛伏喺空白田字格簿上面">
       <figcaption>
-        <b>同小狗一齊寫好每個字</b>
+        <b>嚟狗狗公園寫好每個字</b>
         <span>寫完可以再描，唔催命。</span>
       </figcaption>
     </figure>
@@ -132,26 +136,52 @@ export function renderHome(state) {
 }
 
 export function renderMap(state) {
-  const weeks = [];
+  const completed = new Set(state.completedDays);
+  const unlockedDogs = unlockedDogCount(state.completedDays.length, dogs.length);
+  const zones = [];
   for (let week = 1; week <= WEEK_TOTAL; week += 1) {
     const start = (week - 1) * 5 + 1;
-    const cells = [];
+    const reverse = week % 2 === 0;
+    const parts = [];
     for (let day = start; day <= start + 4; day += 1) {
-      const done = isDayDone(state, day);
+      if (day > start) parts.push('<span class="path-connector" aria-hidden="true"></span>');
+      const done = completed.has(day);
       const current = day === state.cursorDay;
       const locked = day > state.cursorDay && !done;
       const cls = done ? "done" : current ? "now" : locked ? "locked" : "todo";
-      cells.push(`<button type="button" class="map-day ${cls}" data-act="goto-day" data-day="${day}" ${locked ? "disabled" : ""}>
-        <span class="n">${day}</span>
+      parts.push(`<button type="button" class="path-day ${cls}" data-act="goto-day" data-day="${day}" ${locked ? "disabled" : ""}>
+        <span class="n">第 ${day} 日</span>
         <span class="kai">${dayChars(day).map((e) => e.char).join("")}</span>
       </button>`);
+      // Unlock spot after every 4th day (dogs 2..15)
+      if (day % 4 === 0) {
+        const dogIndex = day / 4; // 1..15 → dogs[1] after day 4
+        if (dogIndex < dogs.length) {
+          parts.push('<span class="path-connector" aria-hidden="true"></span>');
+          const dog = dogs[dogIndex];
+          const open = dogIndex < unlockedDogs;
+          if (open) {
+            parts.push(`<button type="button" class="unlock-spot" data-act="tab" data-tab="dogs" title="${esc(dog.name)}">
+              <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
+            </button>`);
+          } else {
+            parts.push(`<button type="button" class="unlock-spot locked" data-act="locked-dog" title="未解鎖">
+              ${iconSilhouette()}
+            </button>`);
+          }
+        }
+      }
     }
-    weeks.push(`<section class="card map-week"><h2>第 ${week} 週</h2><div class="map-row">${cells.join("")}</div></section>`);
+    const doneInWeek = [0,1,2,3,4].filter((i) => completed.has(start + i)).length;
+    zones.push(`<section class="zone">
+      <div class="zone-head"><h2>第 ${week} 週 · 公園小路</h2><span class="zone-tag">${doneInWeek}/5 日</span></div>
+      <div class="path${reverse ? " reverse" : ""}">${parts.join("")}</div>
+    </section>`);
   }
   return `<div class="page" data-screen="map">
     <header class="top"><div class="brand">進度地圖</div></header>
-    <p class="lead">每寫完 4 日就識多一隻狗狗。而家完成咗 ${state.completedDays.length} 日。</p>
-    ${weeks.join("")}
+    <p class="lead">沿著狗狗公園嘅小路行！每寫完 4 日就會遇到新朋友。而家完成咗 ${state.completedDays.length} 日。</p>
+    <div class="park-map">${zones.join("")}</div>
   </div>`;
 }
 
@@ -292,7 +322,7 @@ export function renderDogs(state) {
   }).join("");
   return `<div class="page" data-screen="dogs">
     <header class="top"><div class="brand">狗狗圖鑑</div></header>
-    <p class="lead">已識 ${unlocked} / ${dogs.length} 隻。每寫完 4 日，就識多一隻朋友。起始係毛毛。</p>
+    <p class="lead">已識 ${unlocked} / ${dogs.length} 隻。每寫完 4 日，公園就多一隻朋友。起始係毛毛。</p>
     <div class="dog-grid">${cards}</div>
     <section class="card">
       <h2>狗狗相簿</h2>

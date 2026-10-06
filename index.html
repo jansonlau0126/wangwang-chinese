@@ -3,13 +3,50 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#F4F8FB">
+  <meta name="theme-color" content="#B8E8FF">
   <meta name="description" content="汪汪中文：香港小學生筆順描紅。同小狗一齊寫好每個字，每日 3 個字。">
   <title>汪汪中文</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="manifest" href="/manifest.webmanifest">
 </head>
 <body>
+  <div class="park-bg" aria-hidden="true">
+    <div class="park-sky"></div>
+    <svg class="park-clouds" viewBox="0 0 400 80" preserveAspectRatio="xMidYMin slice">
+      <ellipse cx="60" cy="36" rx="36" ry="16" fill="#fff" opacity="0.85"/>
+      <ellipse cx="88" cy="36" rx="24" ry="14" fill="#fff" opacity="0.85"/>
+      <ellipse cx="40" cy="38" rx="20" ry="12" fill="#fff" opacity="0.75"/>
+      <ellipse cx="220" cy="28" rx="40" ry="18" fill="#fff" opacity="0.8"/>
+      <ellipse cx="250" cy="28" rx="28" ry="14" fill="#fff" opacity="0.8"/>
+      <ellipse cx="340" cy="42" rx="32" ry="14" fill="#fff" opacity="0.7"/>
+    </svg>
+    <svg class="park-hills" viewBox="0 0 400 120" preserveAspectRatio="none">
+      <path d="M0 70 C60 40 110 90 180 55 C240 30 300 80 400 50 L400 120 L0 120 Z" fill="#8FD98A"/>
+      <path d="M0 90 C80 60 140 100 220 75 C300 50 350 95 400 70 L400 120 L0 120 Z" fill="#6FCB6A"/>
+    </svg>
+    <svg class="park-motifs" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet">
+      <!-- bone -->
+      <g class="motif bone" transform="translate(12 78) rotate(-20)">
+        <rect x="4" y="3" width="14" height="5" rx="2" fill="#FBF6E9" opacity="0.9"/>
+        <circle cx="4" cy="3" r="3.2" fill="#FBF6E9"/><circle cx="4" cy="8" r="3.2" fill="#FBF6E9"/>
+        <circle cx="18" cy="3" r="3.2" fill="#FBF6E9"/><circle cx="18" cy="8" r="3.2" fill="#FBF6E9"/>
+      </g>
+      <g class="motif bone" transform="translate(78 82) rotate(15)">
+        <rect x="4" y="3" width="12" height="4" rx="2" fill="#FBF6E9" opacity="0.75"/>
+        <circle cx="4" cy="3" r="2.8" fill="#FBF6E9"/><circle cx="4" cy="7" r="2.8" fill="#FBF6E9"/>
+        <circle cx="16" cy="3" r="2.8" fill="#FBF6E9"/><circle cx="16" cy="7" r="2.8" fill="#FBF6E9"/>
+      </g>
+      <!-- paw -->
+      <g class="motif paw" transform="translate(88 70)" fill="#5A9E55" opacity="0.35">
+        <ellipse cx="6" cy="10" rx="4" ry="3.2"/>
+        <circle cx="2" cy="5" r="2"/><circle cx="6" cy="3.5" r="2"/><circle cx="10" cy="5" r="2"/>
+      </g>
+      <g class="motif paw" transform="translate(6 68)" fill="#5A9E55" opacity="0.3">
+        <ellipse cx="6" cy="10" rx="3.5" ry="2.8"/>
+        <circle cx="2.5" cy="5.5" r="1.7"/><circle cx="6" cy="4" r="1.7"/><circle cx="9.5" cy="5.5" r="1.7"/>
+      </g>
+    </svg>
+  </div>
   <div id="app">
     <main id="main"></main>
     <nav id="tabs" aria-label="主要"></nav>

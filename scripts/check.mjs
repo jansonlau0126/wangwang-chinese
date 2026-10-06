@@ -71,6 +71,9 @@ assert(Array.isArray(manifest.files), "audio manifest must list files");
 // Font subset must cover every character + exampleWord glyph (and UI CJK that FreeHKKai has).
 const fontPath = path.join(root, "public/fonts/FreeHKKai-subset.woff2");
 assert(existsSync(fontPath), "missing FreeHKKai subset woff2");
+const huninnPath = path.join(root, "public/fonts/jf-openhuninn-subset.woff2");
+assert(existsSync(huninnPath), "missing jf-openhuninn subset woff2");
+assert(existsSync(path.join(root, "public/fonts/jf-openhuninn-OFL.txt")), "missing jf-openhuninn OFL text");
 const uiFiles = [
   ...readdirSync(path.join(root, "src")).filter((f) => f.endsWith(".js")).map((f) => path.join(root, "src", f)),
   path.join(root, "index.html"),
@@ -133,5 +136,5 @@ for (const bin of pyBins) {
 }
 assert(fontCheck && fontCheck.status === 0, `font subset missing glyphs: ${(fontCheck?.stdout || "") + (fontCheck?.stderr || "")}`);
 
-console.log("check ok: 180 characters / 60 days, stroke files, overrides, dog unlock /4, ball rule, font subset");
+console.log("check ok: 180 characters / 60 days, stroke files, overrides, dog unlock /4, ball rule, font subsets");
 
