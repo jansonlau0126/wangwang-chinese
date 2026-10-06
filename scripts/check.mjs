@@ -2,7 +2,9 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
-import { applyStrokeOverride, shouldAwardBall, unlockedDogCount } from "../src/strokeOrder.js";
+import { applyStrokeOverride, unlockedDogCount } from "../src/strokeOrder.js";
+import { canAwardBall, grantBone, POSE_COSTS, remainingBoneCap } from "../src/economy.js";
+import { runAssertions as runUnlockSim } from "./sim-unlock.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const characters = JSON.parse(readFileSync(path.join(root, "data/characters.json"), "utf8"));
@@ -60,10 +62,27 @@ assert(unlockedDogCount(3) === 1, "three days still one dog");
 assert(unlockedDogCount(4) === 2, "four days unlock the second dog");
 assert(unlockedDogCount(56) === 15, "56 days unlocks all 15");
 assert(unlockedDogCount(60) === 15, "unlocks cap at 15");
-assert(shouldAwardBall({ zeroHints: true, daysWithCompanion: 1, alreadyHas: false }) === true, "zero hints awards the ball");
-assert(shouldAwardBall({ zeroHints: false, daysWithCompanion: 3, alreadyHas: false }) === true, "third day with the same dog awards the ball");
-assert(shouldAwardBall({ zeroHints: true, daysWithCompanion: 1, alreadyHas: true }) === false, "ball is collected once");
-assert(shouldAwardBall({ zeroHints: false, daysWithCompanion: 1, alreadyHas: false }) === false, "no bonus without a trigger");
+const readyAlbum = { sit: true, happy: true, sleep: true, stretch: true, "act-a": true, "act-b": true, ball: false };
+assert(canAwardBall(readyAlbum, { zeroHints: true, isCompanion: true }) === true, "ball when poses ready + zero + companion");
+assert(canAwardBall(readyAlbum, { zeroHints: true, isCompanion: false }) === false, "ball needs companion");
+assert(canAwardBall({ ...readyAlbum, ball: true }, { zeroHints: true, isCompanion: true }) === false, "ball once");
+assert(canAwardBall({ ...readyAlbum, happy: false }, { zeroHints: true, isCompanion: true }) === false, "ball needs all paid poses");
+assert(POSE_COSTS.happy === 4 && POSE_COSTS["act-b"] === 6, "pose costs");
+{
+  let eco = { bones: 0, boneLedger: [] };
+  const a = grantBone(eco, "lesson");
+  eco = { bones: a.bones, boneLedger: a.ledger };
+  const b = grantBone(eco, "review");
+  eco = { bones: b.bones, boneLedger: b.ledger };
+  const c = grantBone(eco, "zero");
+  assert(a.granted && b.granted && !c.granted, "daily bone cap is 2");
+  assert(remainingBoneCap(eco.boneLedger) === 0, "cap exhausted");
+}
+{
+  const sim = runUnlockSim();
+  assert(sim.errors.length === 0, `unlock sim: ${sim.errors.join("; ")}`);
+  console.log(`unlock sim: ${sim.realistic.weeks} weeks, binge ≥ ${sim.binge.minDaysForPaidPoses} days, ${sim.TOTAL_PAID_BONES} bones`);
+}
 
 const manifest = JSON.parse(readFileSync(path.join(root, "data/audio-manifest.json"), "utf8"));
 assert(Array.isArray(manifest.files), "audio manifest must list files");

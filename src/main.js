@@ -1,27 +1,33 @@
-import { playReading, playText, stopAudio, warmVoices } from "./audio.js";
+import { playReading, stopAudio, warmVoices } from "./audio.js";
 import { destroyPractice, mountPractice } from "./practice.js";
 import "./styles.css";
 import {
   advanceDay,
   beginReview,
+  buyPose,
+  closeAlbum,
   closeCardDetail,
   currentEntry,
+  dismissPoseUnlock,
   dismissReward,
   ensureHints,
   leavePractice,
   loadState,
   markDogsSeen,
   noteFreeFinished,
+  openAlbum,
   openCardDetail,
   pickCompanion,
   retryStage,
   saveState,
   setCardWeek,
   startPractice,
+  startWarmup,
   goNextStage,
 } from "./state.js";
 import { findChar } from "./chars.js";
-import { dogBySlug } from "./dogs.js";
+import { dogBySlug, dogs } from "./dogs.js";
+import { unlockedDogCount } from "./strokeOrder.js";
 import { renderMain, renderTabs } from "./ui.js";
 
 const state = loadState();
@@ -35,6 +41,7 @@ const HASH = {
   map: "#/map",
   cards: "#/cards",
   dogs: "#/dogs",
+  album: "#/dogs",
   about: "#/about",
   practice: "#/write",
   reward: "#/reward",
@@ -68,7 +75,7 @@ function applyStoredScreenFromHash() {
 }
 
 function titleFor(screen) {
-  if (screen === "dogs") return "狗狗圖鑑 · 汪汪中文";
+  if (screen === "dogs" || screen === "album") return "狗狗圖鑑 · 汪汪中文";
   if (screen === "about") return "關於 · 汪汪中文";
   if (screen === "cards") return "生字卡 · 汪汪中文";
   if (screen === "map") return "進度 · 汪汪中文";
@@ -98,7 +105,6 @@ function render() {
   if (state.screen === "practice" && state.active && entry) {
     const stage = state.active.stage;
     if (stage === "listen") {
-      // Auto-play after render; first user tap still unlocks iOS via retry/speak.
       playReading(entry).then((result) => {
         if (pass !== renderLock || state.active?.stage !== "listen") return;
         if (result.char === "none") {
@@ -154,7 +160,6 @@ function speakCard(char, wantSlow) {
   const dbl = lastSpeak.key === key && now - lastSpeak.t < 300;
   lastSpeak = { key, t: now };
   const slow = wantSlow || dbl;
-  // First utterance must start inside the tap handler (iOS).
   playReading(entry, { slow });
 }
 
@@ -165,6 +170,7 @@ function onClick(event) {
   if (act === "tab") {
     if (state.screen === "practice") leavePractice(state);
     if (state.screen === "reward") dismissReward(state);
+    if (state.screen === "album") closeAlbum(state);
     closeCardDetail(state);
     show(button.dataset.tab || "home");
     return;
@@ -172,6 +178,11 @@ function onClick(event) {
   if (act === "start") {
     startPractice(state);
     show("practice");
+    return;
+  }
+  if (act === "warmup") {
+    if (startWarmup(state)) show("practice");
+    else toast("未有溫習字。先寫幾日新字啦！");
     return;
   }
   if (act === "tile") {
@@ -265,6 +276,29 @@ function onClick(event) {
     if (state.pendingReward) show("reward");
     return;
   }
+  if (act === "open-album") {
+    if (openAlbum(state, button.dataset.slug)) show("album");
+    return;
+  }
+  if (act === "close-album") {
+    closeAlbum(state);
+    show("dogs");
+    return;
+  }
+  if (act === "buy-pose") {
+    if (buyPose(state, button.dataset.slug, button.dataset.pose)) {
+      refresh();
+      toast("換到新相喇！");
+    } else {
+      toast("骨頭唔夠呀，再寫多啲啦！");
+    }
+    return;
+  }
+  if (act === "dismiss-pose") {
+    dismissPoseUnlock(state);
+    refresh();
+    return;
+  }
   if (act === "pick-dog") {
     if (pickCompanion(state, button.dataset.slug)) {
       refresh();
@@ -302,6 +336,9 @@ document.body.addEventListener("pointerup", onPointerUp);
 window.addEventListener("popstate", () => {
   const wanted = screenFromHash();
   if (state.screen === "practice" && wanted !== "practice") leavePractice(state);
+  if (state.screen === "album" && wanted !== "dogs") {
+    closeAlbum(state);
+  }
   if (wanted === "practice" && state.active) state.screen = "practice";
   else if (wanted === "reward" && state.pendingReward) state.screen = "reward";
   else state.screen = wanted === "practice" || wanted === "reward" ? "home" : wanted;
@@ -314,7 +351,6 @@ if (!location.hash) history.replaceState({ screen: state.screen }, "", HASH[stat
 warmVoices();
 render();
 
-/** Dev / e2e test hooks — never shipped in production builds. */
 const enableTestHooks = import.meta.env.DEV || import.meta.env.VITE_E2E === "1";
 if (enableTestHooks) {
   window.__WW = {
@@ -323,6 +359,7 @@ if (enableTestHooks) {
     render,
     show,
     startPractice: () => { startPractice(state); show("practice"); },
+    startWarmup: () => { startWarmup(state); show("practice"); },
     goNextStage: () => { goNextStage(state); show(state.screen); },
     advanceDay: () => { advanceDay(state); show("home"); },
     completeDays(n) {
@@ -330,6 +367,33 @@ if (enableTestHooks) {
         if (!state.completedDays.includes(i)) state.completedDays.push(i);
       }
       state.cursorDay = Math.min(n + 1, 60);
+      const u = unlockedDogCount(state.completedDays.length, dogs.length);
+      dogs.slice(0, u).forEach((d) => { state.album[d.slug].sit = true; });
+      saveState(state);
+      render();
+    },
+    grantBones(n) {
+      for (let i = 0; i < n; i += 1) {
+        const d = new Date();
+        d.setDate(d.getDate() - i - 1);
+        const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        state.boneLedger.push({ date, amount: 1, reason: "test" });
+        state.bones += 1;
+      }
+      saveState(state);
+      render();
+    },
+    buyPose(slug, pose) {
+      buyPose(state, slug, pose);
+      saveState(state);
+      render();
+    },
+    openAlbum(slug) {
+      openAlbum(state, slug);
+      show("album");
+    },
+    dismissPoseUnlock() {
+      dismissPoseUnlock(state);
       saveState(state);
       render();
     },

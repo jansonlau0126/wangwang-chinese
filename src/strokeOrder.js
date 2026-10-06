@@ -58,8 +58,9 @@ export function dayHintTotal(hintMap) {
  * first time a companion finishes a zero-hint day, or every 3rd completed day
  * with that same dog. Already collected means no repeat.
  */
+/** @deprecated Ball photos now use economy.canAwardBall (poses ready + companion + zero hints). */
 export function shouldAwardBall({ zeroHints, daysWithCompanion, alreadyHas }) {
   if (alreadyHas) return false;
   if (zeroHints) return true;
-  return daysWithCompanion > 0 && daysWithCompanion % 3 === 0;
+  return false;
 }

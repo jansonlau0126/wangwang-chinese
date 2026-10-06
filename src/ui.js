@@ -1,7 +1,17 @@
 import { dayChars, DAY_TOTAL, WEEK_TOTAL, characters, weekChars, weekOfDay } from "./chars.js";
 import { dailyPose, dogBySlug, dogs, heroSrc, poseSrc } from "./dogs.js";
-import { companionName, isCharUnlocked, isDayDone, recordList, tileStatus, unlockedCount } from "./state.js";
+import {
+  companionName,
+  dogAlbumProgress,
+  isCharUnlocked,
+  isDayDone,
+  recordList,
+  seasonComplete,
+  tileStatus,
+  unlockedCount,
+} from "./state.js";
 import { unlockedDogCount } from "./strokeOrder.js";
+import { ALBUM_POSES, POSE_COSTS, POSE_LABEL, remainingBoneCap } from "./economy.js";
 
 export const STAGES = [
   { id: "listen", label: "汪汪讀" },
@@ -20,6 +30,12 @@ export const DAY_COLORS = [
   "#EDEAF6",
   "#E8F4F4",
 ];
+
+
+function boneBadge(state) {
+  const left = remainingBoneCap(state.boneLedger);
+  return `<div class="bone-badge" title="今日仲可以攞 ${left} 嚿骨頭"><span class="bone-ico" aria-hidden="true">🦴</span><b>${state.bones || 0}</b></div>`;
+}
 
 export function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({
@@ -88,15 +104,19 @@ export function renderHome(state) {
   const allDone = state.completedDays.length >= DAY_TOTAL;
   const name = companionName(state);
   let primary = "";
-  if (allDone && done) {
-    primary = '<button type="button" class="btn" data-act="tab" data-tab="dogs">去睇狗狗</button>';
+  const seasonDone = seasonComplete(state);
+  if (seasonDone) {
+    primary = '<button type="button" class="btn" data-act="warmup">今日溫習 🦴</button>';
   } else if (done) {
     primary = '<button type="button" class="btn" data-act="advance">下一日 3 個字</button>';
-  } else if (state.active && state.active.day === day && !state.active.review) {
+  } else if (state.active && state.active.day === day && !state.active.review && !state.active.reviewSession) {
     primary = '<button type="button" class="btn" data-act="start">繼續寫</button>';
   } else {
     primary = '<button type="button" class="btn" data-act="start">開始寫</button>';
   }
+  const warmupExtra = (!seasonDone && state.completedDays.length > 0)
+    ? '<button type="button" class="btn ghost" data-act="warmup">溫習 3 個字</button>'
+    : "";
   const rewardLink = state.pendingReward
     ? '<button type="button" class="btn ghost" data-act="reward">睇返今日骨頭</button>'
     : "";
@@ -109,10 +129,11 @@ export function renderHome(state) {
     </button>`;
   }).join("");
   const week = weekOfDay(day);
-  const title = allDone && done ? "第一季寫完喇！好叻呀！" : `第 ${day} 日 · 第 ${week} 週`;
+  const title = seasonDone ? "第一季寫完喇！繼續溫習攞骨頭" : `第 ${day} 日 · 第 ${week} 週`;
   return `<div class="page" data-screen="home">
     <header class="top">
       <div class="brand">汪汪中文</div>
+      ${boneBadge(state)}
       <button type="button" class="who" data-act="tab" data-tab="dogs">${dogFace(state, homePose(state))}<span>${esc(name)}</span></button>
     </header>
     <figure class="hero">
@@ -129,7 +150,7 @@ export function renderHome(state) {
       </div>
       <p class="muted">今日${esc(name)}陪你。寫錯唔緊要，再嚟一次！</p>
       <div class="tiles">${tiles}</div>
-      <div class="actions">${primary}${rewardLink}</div>
+      <div class="actions">${primary}${warmupExtra}${rewardLink}</div>
     </section>
     <p class="progress-line">已寫 ${state.completedDays.length} / ${DAY_TOTAL} 日 · 識咗 ${unlockedCount(state)} / ${dogs.length} 隻狗</p>
   </div>`;
@@ -142,8 +163,8 @@ export function renderMap(state) {
   const cols = 3;
   const rows = Math.ceil(DAY_TOTAL / cols);
   const W = 360;
-  const rowH = 118;
-  const topPad = 36;
+  const rowH = 132;
+  const topPad = 64;
   const bottomPad = 48;
   const height = topPad + rows * rowH + bottomPad;
 
@@ -222,16 +243,21 @@ export function renderMap(state) {
     if (row % 4 === 2) decorations.push(decor(side === 18 ? W - 28 : 28, y + 18, "bone", row));
   }
 
-  // Week signposts at first day of each week
+  // Week signposts: in the vertical gap above the week-start row, on the path-turn outer side
   const signs = [];
   for (let week = 1; week <= WEEK_TOTAL; week += 1) {
     const day = (week - 1) * 5 + 1;
-    const { x, y, ltr } = stonePos(day);
-    const sx = ltr ? Math.max(10, x - 52) : Math.min(W - 10, x + 52);
-    signs.push(`<g class="week-sign" transform="translate(${sx} ${y - 38})">
-      <rect x="-22" y="16" width="6" height="28" rx="2" fill="#8B5A2B"/>
-      <rect x="-40" y="0" width="42" height="22" rx="4" fill="#C4A574" stroke="#8B5A2B" stroke-width="2"/>
-      <text x="-19" y="15" text-anchor="middle" font-size="11" font-weight="700" fill="#3B2A14">第${week}週</text>
+    const { row, ltr } = stonePos(day);
+    // Midway between previous row and this row (clear of stone centres)
+    const sy = row === 0
+      ? 22
+      : topPad + row * rowH + 44 - Math.floor(rowH / 2);
+    // Outer turn side: LTR rows enter from left, RTL from right
+    const sx = ltr ? 34 : W - 34;
+    signs.push(`<g class="week-sign" transform="translate(${sx} ${sy})">
+      <rect x="-2" y="16" width="4" height="18" rx="2" fill="#8B5A2B"/>
+      <rect x="-24" y="0" width="48" height="20" rx="5" fill="#C4A574" stroke="#8B5A2B" stroke-width="1.5"/>
+      <text x="0" y="14" text-anchor="middle" font-size="10" font-weight="700" fill="#3B2A14">第${week}週</text>
     </g>`);
   }
 
@@ -305,13 +331,20 @@ export function renderMap(state) {
   </div>`;
 }
 
-function stageChips(current) {
-  return STAGES.map((stage) => {
+function stageChips(current, stages = STAGES) {
+  return stages.map((stage) => {
     const on = stage.id === current;
-    const passed = STAGES.findIndex((item) => item.id === stage.id) < STAGES.findIndex((item) => item.id === current);
+    const passed = stages.findIndex((item) => item.id === stage.id) < stages.findIndex((item) => item.id === current);
     return `<span class="chip${on ? " on" : ""}${passed ? " done" : ""}">${stage.label}</span>`;
   }).join("");
 }
+
+const REVIEW_STAGE_META = [
+  { id: "watch", label: "睇汪汪寫" },
+  { id: "light", label: "少啲腳印" },
+  { id: "free", label: "我自己寫" },
+  { id: "cheer", label: "攞骨頭" },
+];
 
 function reading(entry) {
   return `<div class="reading-block">
@@ -325,12 +358,16 @@ function reading(entry) {
 }
 
 export function renderPractice(state) {
-  const entry = state.active?.review
-    ? characters.find((item) => item.char === state.active.reviewChar)
-    : dayChars(state.active.day)[state.active.index];
+  const isWarmup = Boolean(state.active?.reviewSession);
+  const isSingleReview = Boolean(state.active?.review) && !isWarmup;
+  const entry = isWarmup
+    ? characters.find((item) => item.char === state.active.queue[state.active.index])
+    : isSingleReview
+      ? characters.find((item) => item.char === state.active.reviewChar)
+      : dayChars(state.active.day)[state.active.index];
   const stage = state.active.stage;
-  const index = state.active.review ? 1 : state.active.index + 1;
-  const total = state.active.review ? 1 : 3;
+  const index = isSingleReview ? 1 : (isWarmup ? state.active.index + 1 : state.active.index + 1);
+  const total = isSingleReview ? 1 : (isWarmup ? state.active.queue.length : 3);
   const dog = dogBySlug(state.companion);
   const listenGrid = stage === "listen"
     ? `<div class="model-char kai" aria-hidden="true">${esc(entry.char)}</div>`
@@ -343,13 +380,16 @@ export function renderPractice(state) {
         <div id="writer" class="writer-host">${listenGrid}</div>
         <svg id="guides" class="guides" aria-hidden="true"></svg>
       </div>`;
+  const cheerForward = isSingleReview
+    ? "返去"
+    : (index >= total ? "攞骨頭" : "下一個字");
   const forward = {
     listen: "去睇汪汪寫",
-    watch: "跟腳印描",
+    watch: isWarmup ? "少啲腳印" : "跟腳印描",
     guided: "少啲腳印",
     light: "我自己寫",
     free: "寫好喇！",
-    cheer: state.active.review ? "返生字卡" : (index >= total ? "攞骨頭" : "下一個字"),
+    cheer: cheerForward,
   }[stage];
   const retry = {
     listen: "再聽一次",
@@ -371,13 +411,19 @@ export function renderPractice(state) {
     free: "成個格空晒，你自己寫！",
     cheer: `好叻呀！${dog.name}送骨頭畀你，「${entry.char}」寫好喇！`,
   }[stage];
+  const stepLabel = isWarmup
+    ? `溫習 ${index} / ${total}`
+    : isSingleReview
+      ? "再寫一次"
+      : `第 ${index} / ${total} 個字`;
+  const chips = stageChips(stage, isWarmup ? REVIEW_STAGE_META : STAGES);
   return `<div class="practice" data-screen="practice" data-stage="${stage}">
     <header class="top">
       <button type="button" class="btn ghost tiny" data-act="back">返回</button>
-      <div class="step">${state.active.review ? "再寫一次" : `第 ${index} / ${total} 個字`}</div>
+      <div class="step">${stepLabel}</div>
       ${dogFace(state, dailyPose(state.companion))}
     </header>
-    <div class="chips" aria-label="步驟">${stageChips(stage)}</div>
+    <div class="chips" aria-label="步驟">${chips}</div>
     ${reading(entry)}
     <div class="tian-slot">${grid}</div>
     <p id="stroke-label" class="stroke-label">${stage === "listen" || stage === "cheer" ? "" : "第 1 筆"}</p>
@@ -390,20 +436,36 @@ export function renderPractice(state) {
   </div>`;
 }
 
+function boneEarnLine(reward) {
+  const earned = reward.bonesEarned || [];
+  if (!earned.length) {
+    return `<p class="bone-earn muted">今日骨頭已滿（最多 2 嚿）。聽日再嚟啦！</p>`;
+  }
+  const labels = { lesson: "新一日", review: "溫習", zero: "零提示獎勵" };
+  const bits = earned.map((r) => labels[r] || r).join(" · ");
+  return `<p class="bone-earn">今日攞到 <b>+${earned.length}</b> 骨頭（${bits}）· 今日 ${reward.bonesToday || earned.length}/2</p>`;
+}
+
 export function renderReward(state) {
   const reward = state.pendingReward;
   if (!reward) return renderHome(state);
   const companion = dogBySlug(reward.companion);
   const newbie = reward.newDog ? dogBySlug(reward.newDog) : null;
   const star = newbie || companion;
-  const more = reward.day < DAY_TOTAL;
+  const isWarmup = reward.kind === "warmup";
+  const more = !isWarmup && reward.day && reward.day < DAY_TOTAL;
   const ball = reward.ball ? dogBySlug(reward.ball) : null;
+  const kicker = isWarmup ? "溫習寫完喇！好叻呀！" : "今日寫完喇！好叻呀！";
+  const subtitle = isWarmup
+    ? "溫習 3 個字寫好咗，攞骨頭啦！"
+    : `第 ${reward.day} 日 3 個字都寫好咗，攞骨頭啦！`;
   return `<div class="page reward" data-screen="reward">
-    <header class="top"><div class="brand">汪汪中文</div></header>
+    <header class="top"><div class="brand">汪汪中文</div>${boneBadge(state)}</header>
     <section class="card celebrate">
-      <p class="kicker">今日寫完喇！好叻呀！</p>
+      <p class="kicker">${kicker}</p>
       <h1>${newbie ? `識到新朋友：${esc(newbie.name)}` : `${esc(companion.name)}好開心`}</h1>
-      <p class="muted">第 ${reward.day} 日 3 個字都寫好咗，攞骨頭啦！</p>
+      <p class="muted">${subtitle}</p>
+      ${boneEarnLine(reward)}
       <img class="reward-photo" src="${esc(poseSrc(star, "happy"))}" alt="${esc(star.name)}">
       <p class="breed">${esc(star.breed.zh)}</p>
       ${ball ? `<div class="ball"><img src="${esc(poseSrc(ball, "ball"))}" alt="${esc(ball.name)}同綠色網球"><p>${esc(ball.name)}搵到隱藏波波！</p></div>` : ""}
@@ -429,25 +491,139 @@ export function renderDogs(state) {
         <span class="muted">再寫 ${need || "多幾"} 日</span>
       </button>`;
     }
-    return `<button type="button" class="dog${selected ? " on" : ""}" data-act="pick-dog" data-slug="${esc(dog.slug)}">
+    const prog = dogAlbumProgress(state, dog.slug);
+    return `<button type="button" class="dog${selected ? " on" : ""}" data-act="open-album" data-slug="${esc(dog.slug)}">
       <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
       <span class="dog-name">${esc(dog.name)}${fresh ? '<i class="pill">新</i>' : ""}</span>
       <span class="muted">${esc(dog.breed.zh)}</span>
-      ${selected ? '<span class="pill mint">陪緊你</span>' : '<span class="pick">揀佢陪我</span>'}
+      <span class="album-prog">${prog}/7 相</span>
+      ${selected ? '<span class="pill mint">陪緊你</span>' : ""}
     </button>`;
   }).join("");
-  const balls = state.balls.map((slug) => {
-    const dog = dogBySlug(slug);
-    return `<figure class="ball-shot"><img src="${esc(poseSrc(dog, "ball"))}" alt="${esc(dog.name)}同綠色網球"><figcaption>${esc(dog.name)}的波波</figcaption></figure>`;
-  }).join("");
   return `<div class="page" data-screen="dogs">
-    <header class="top"><div class="brand">狗狗圖鑑</div></header>
-    <p class="lead">已識 ${unlocked} / ${dogs.length} 隻。每寫完 4 日，公園就多一隻朋友。起始係毛毛。</p>
+    <header class="top"><div class="brand">狗狗圖鑑</div>${boneBadge(state)}</header>
+    <p class="lead">已識 ${unlocked} / ${dogs.length} 隻。撳隻狗睇相簿，用骨頭換相。每寫完 4 日多一隻朋友。</p>
     <div class="dog-grid">${cards}</div>
-    <section class="card">
-      <h2>狗狗相簿</h2>
-      ${balls ? `<div class="album">${balls}</div>` : "<p class=\"muted\">未有隱藏波波。同一個狗狗陪滿 3 日，或者今日 3 個字都冇提示，就會見到（固定規則，唔係隨機）。</p>"}
+  </div>`;
+}
+
+function poseModal(state) {
+  if (!state.pendingPose) return "";
+  const dog = dogBySlug(state.pendingPose.slug);
+  const pose = state.pendingPose.pose;
+  return `<div class="sheet pose-sheet" role="dialog" aria-modal="true" aria-label="解鎖新相">
+    <div class="sheet-card celebrate">
+      <p class="kicker">換到新相喇！</p>
+      <h2>${esc(dog.name)} · ${POSE_LABEL[pose] || pose}</h2>
+      <img class="reward-photo" src="${esc(poseSrc(dog, pose))}" alt="${esc(dog.name)}">
+      <button type="button" class="btn" data-act="dismiss-pose">太好喇！</button>
+    </div>
+  </div>`;
+}
+
+export function renderAlbum(state) {
+  const slug = state.albumDog;
+  const dog = dogBySlug(slug);
+  if (!dog) return renderDogs(state);
+  const entry = state.album[slug] || {};
+  const slots = ALBUM_POSES.map((pose) => {
+    const unlocked = Boolean(entry[pose]);
+    if (unlocked) {
+      return `<figure class="pose-slot open">
+        <img src="${esc(poseSrc(dog, pose))}" alt="${esc(dog.name)} ${POSE_LABEL[pose]}">
+        <figcaption>${POSE_LABEL[pose]}</figcaption>
+      </figure>`;
+    }
+    if (pose === "ball") {
+      return `<figure class="pose-slot locked ball-slot">
+        <div class="pose-mystery">?</div>
+        <figcaption>波波相</figcaption>
+        <p class="pose-hint">同佢一齊零提示寫完一日</p>
+      </figure>`;
+    }
+    if (pose === "sit") {
+      return `<figure class="pose-slot locked"><div class="pose-mystery">${iconSilhouette()}</div><figcaption>坐低</figcaption></figure>`;
+    }
+    const cost = POSE_COSTS[pose];
+    const can = (state.bones || 0) >= cost;
+    return `<figure class="pose-slot locked">
+      <div class="pose-mystery">${iconSilhouette()}</div>
+      <figcaption>${POSE_LABEL[pose]}</figcaption>
+      <button type="button" class="btn tiny ${can ? "" : "ghost"}" data-act="buy-pose" data-slug="${esc(slug)}" data-pose="${pose}" ${can ? "" : "disabled"}>
+        用骨頭換相 · ${cost}🦴
+      </button>
+    </figure>`;
+  }).join("");
+  const selected = state.companion === slug;
+  return `<div class="page album-page" data-screen="album">
+    <header class="top">
+      <button type="button" class="btn ghost tiny" data-act="close-album">‹ 返回</button>
+      <div class="brand">${esc(dog.name)}相簿</div>
+      ${boneBadge(state)}
+    </header>
+    <section class="card album-hero">
+      <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
+      <div>
+        <h1>${esc(dog.name)}</h1>
+        <p class="muted">${esc(dog.breed.zh)} · ${dogAlbumProgress(state, slug)}/7 相</p>
+        ${selected
+          ? '<span class="pill mint">陪緊你</span>'
+          : `<button type="button" class="btn ghost tiny" data-act="pick-dog" data-slug="${esc(slug)}">揀佢陪我</button>`}
+      </div>
     </section>
+    <div class="pose-grid">${slots}</div>
+    ${poseModal(state)}
+  </div>`;
+}
+
+export function renderCards(state) {
+  const week = state.cardWeek || 1;
+  const list = weekChars(week);
+  const dots = Array.from({ length: WEEK_TOTAL }, (_, i) => {
+    const n = i + 1;
+    return `<i class="${n === week ? "on" : ""}" data-act="card-week" data-week="${n}"></i>`;
+  }).join("");
+  const cells = list.map((entry) => {
+    const unlocked = isCharUnlocked(state, entry);
+    const dayIndex = (entry.day - 1) % 5;
+    const bg = DAY_COLORS[dayIndex];
+    if (!unlocked) {
+      return `<div class="vc-cell locked" style="background:#E8EEF3"><span class="kai ghost-char">？</span><small>第 ${entry.day} 日</small></div>`;
+    }
+    const done = isDayDone(state, entry.day);
+    return `<button type="button" class="vc-cell${done ? " done" : ""}" style="background:${bg}" data-act="open-card" data-char="${esc(entry.char)}">
+      <span class="kai">${esc(entry.char)}</span>
+      <small>${esc(entry.jyutping)}</small>
+      <span class="ex">${esc(entry.exampleWord)}</span>
+    </button>`;
+  }).join("");
+  const learned = list.filter((entry) => isDayDone(state, entry.day)).length;
+  return `<div class="page cards" data-screen="cards">
+    <header class="top">
+      <div class="brand">生字卡</div>
+      ${boneBadge(state)}
+      <div class="dots" aria-label="週次">${dots}</div>
+    </header>
+    <p class="lead">第 ${week} 週 · 15 個字 · 已寫 ${learned} / 15 · 左右掃睇其他週</p>
+    <div class="swipe" data-swipe="cards">
+      <div class="vc" id="vcard">
+        <div class="vc-head">
+          ${dogFace(state, dailyPose(state.companion))}
+          <div class="vc-title">
+            <div class="vc-kicker">第一季 · 第 ${week} 週</div>
+            <div class="vc-name">生字卡</div>
+          </div>
+          <div class="vc-count"><b>15</b>字</div>
+        </div>
+        <div class="vc-grid">${cells}</div>
+        <div class="vc-foot"><span>撳個字睇大啲</span><span class="vc-logo">汪汪中文</span></div>
+      </div>
+    </div>
+    <div class="cardtools">
+      <button type="button" class="btn ghost" data-act="card-week" data-week="${week - 1}" ${week <= 1 ? "disabled" : ""}>‹ 上一週</button>
+      <button type="button" class="btn ghost" data-act="card-week" data-week="${week + 1}" ${week >= WEEK_TOTAL ? "disabled" : ""}>下一週 ›</button>
+    </div>
+    ${cardDetailHtml(state)}
   </div>`;
 }
 
@@ -477,56 +653,6 @@ function cardDetailHtml(state) {
   </div>`;
 }
 
-export function renderCards(state) {
-  const week = state.cardWeek || 1;
-  const list = weekChars(week);
-  const dots = Array.from({ length: WEEK_TOTAL }, (_, i) => {
-    const n = i + 1;
-    return `<i class="${n === week ? "on" : ""}" data-act="card-week" data-week="${n}"></i>`;
-  }).join("");
-  const cells = list.map((entry) => {
-    const unlocked = isCharUnlocked(state, entry);
-    const dayIndex = (entry.day - 1) % 5;
-    const bg = DAY_COLORS[dayIndex];
-    if (!unlocked) {
-      return `<div class="vc-cell locked" style="background:#E8EEF3"><span class="kai ghost-char">？</span><small>第 ${entry.day} 日</small></div>`;
-    }
-    const done = isDayDone(state, entry.day);
-    return `<button type="button" class="vc-cell${done ? " done" : ""}" style="background:${bg}" data-act="open-card" data-char="${esc(entry.char)}">
-      <span class="kai">${esc(entry.char)}</span>
-      <small>${esc(entry.jyutping)}</small>
-      <span class="ex">${esc(entry.exampleWord)}</span>
-    </button>`;
-  }).join("");
-  const learned = list.filter((entry) => isDayDone(state, entry.day)).length;
-  return `<div class="page cards" data-screen="cards">
-    <header class="top">
-      <div class="brand">生字卡</div>
-      <div class="dots" aria-label="週次">${dots}</div>
-    </header>
-    <p class="lead">第 ${week} 週 · 15 個字 · 已寫 ${learned} / 15 · 左右掃睇其他週</p>
-    <div class="swipe" data-swipe="cards">
-      <div class="vc" id="vcard">
-        <div class="vc-head">
-          ${dogFace(state, dailyPose(state.companion))}
-          <div class="vc-title">
-            <div class="vc-kicker">第一季 · 第 ${week} 週</div>
-            <div class="vc-name">生字卡</div>
-          </div>
-          <div class="vc-count"><b>15</b>字</div>
-        </div>
-        <div class="vc-grid">${cells}</div>
-        <div class="vc-foot"><span>撳個字睇大啲</span><span class="vc-logo">汪汪中文</span></div>
-      </div>
-    </div>
-    <div class="cardtools">
-      <button type="button" class="btn ghost" data-act="card-week" data-week="${week - 1}" ${week <= 1 ? "disabled" : ""}>‹ 上一週</button>
-      <button type="button" class="btn ghost" data-act="card-week" data-week="${week + 1}" ${week >= WEEK_TOTAL ? "disabled" : ""}>下一週 ›</button>
-    </div>
-    ${cardDetailHtml(state)}
-  </div>`;
-}
-
 export function renderAbout(state) {
   const rows = recordList(state);
   const body = rows.length
@@ -536,7 +662,7 @@ export function renderAbout(state) {
     <header class="top"><div class="brand">關於我</div></header>
     <section class="card prose">
       <h1>汪汪中文</h1>
-      <p>香港小學生用嘅筆順描紅練習。每日 3 個字，同小狗一齊寫。寫錯可以再試，冇愛心，冇扣分。</p>
+      <p>香港小學生用嘅筆順描紅練習。每日 3 個字，同小狗一齊寫。寫完攞骨頭換狗狗相。寫錯可以再試，冇愛心，冇扣分。</p>
       <p>第一季 180 字（60 日）。筆順跟香港教育局《香港小學學習字詞表》建議次序；筆畫外形用開源資料。有出入嘅字已按教育局次序重排（出、母、的、來、飛）。</p>
       <h2>鳴謝</h2>
       <ul>
@@ -555,6 +681,7 @@ export function renderAbout(state) {
 export function renderMain(state) {
   if (state.screen === "practice" && state.active) return renderPractice(state);
   if (state.screen === "reward") return renderReward(state);
+  if (state.screen === "album") return renderAlbum(state);
   if (state.screen === "dogs") return renderDogs(state);
   if (state.screen === "about") return renderAbout(state);
   if (state.screen === "map") return renderMap(state);
