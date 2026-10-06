@@ -1,0 +1,26 @@
+{
+  "name": "wangwang-zhongwen",
+  "version": "0.2.0",
+  "private": true,
+  "description": "汪汪中文 — 香港小學筆順描紅",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/check.mjs && vite build",
+    "preview": "vite preview",
+    "strokes": "node scripts/build-strokes.mjs",
+    "check": "node scripts/check.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jansonlau0126/wangwang-chinese.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "hanzi-writer": "^3.7.3"
+  },
+  "devDependencies": {
+    "hanzi-writer-data": "^2.0.1",
+    "vite": "^6.4.4"
+  }
+}
