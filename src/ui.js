@@ -164,8 +164,14 @@ function stageChips(current) {
 }
 
 function reading(entry) {
-  return `<p class="reading"><span class="kai name">${esc(entry.char)}</span> <span class="jyut">${esc(entry.jyutping)}</span></p>
-    <p class="example">例詞 <span class="kai">${esc(entry.exampleWord)}</span> <span class="jyut">${esc(entry.exampleJyutping)}</span></p>`;
+  return `<div class="reading-block">
+      <p class="reading"><span class="kai name">${esc(entry.char)}</span> <span class="jyut">${esc(entry.jyutping)}</span></p>
+      <div class="example">
+        <span class="ex-label">例詞</span>
+        <span class="kai ex-word">${esc(entry.exampleWord)}</span>
+        <span class="jyut ex-jyut">${esc(entry.exampleJyutping)}</span>
+      </div>
+    </div>`;
 }
 
 export function renderPractice(state) {
@@ -307,7 +313,11 @@ function cardDetailHtml(state) {
         <div class="model-char kai">${esc(entry.char)}</div>
       </div>
       <p class="reading center"><span class="jyut big-jyut">${esc(entry.jyutping)}</span></p>
-      <p class="example center">例詞 <span class="kai">${esc(entry.exampleWord)}</span> <span class="jyut">${esc(entry.exampleJyutping)}</span></p>
+      <div class="example center">
+        <span class="ex-label">例詞</span>
+        <span class="kai ex-word">${esc(entry.exampleWord)}</span>
+        <span class="jyut ex-jyut">${esc(entry.exampleJyutping)}</span>
+      </div>
       <div class="audio-row">
         <button type="button" class="btn ab" data-act="speak-card" data-char="${esc(entry.char)}" data-slow="0"><span aria-hidden="true">🔊</span>聽讀音</button>
         <button type="button" class="btn ghost ab" data-act="speak-card" data-char="${esc(entry.char)}" data-slow="1"><span aria-hidden="true">🐢</span>慢速</button>

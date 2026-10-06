@@ -1,6 +1,7 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import { applyStrokeOverride, shouldAwardBall, unlockedDogCount } from "../src/strokeOrder.js";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -67,4 +68,70 @@ assert(shouldAwardBall({ zeroHints: false, daysWithCompanion: 1, alreadyHas: fal
 const manifest = JSON.parse(readFileSync(path.join(root, "data/audio-manifest.json"), "utf8"));
 assert(Array.isArray(manifest.files), "audio manifest must list files");
 
-console.log("check ok: 180 characters / 60 days, stroke files, overrides, dog unlock /4, ball rule");
+// Font subset must cover every character + exampleWord glyph (and UI CJK that FreeHKKai has).
+const fontPath = path.join(root, "public/fonts/FreeHKKai-subset.woff2");
+assert(existsSync(fontPath), "missing FreeHKKai subset woff2");
+const uiFiles = [
+  ...readdirSync(path.join(root, "src")).filter((f) => f.endsWith(".js")).map((f) => path.join(root, "src", f)),
+  path.join(root, "index.html"),
+  path.join(root, "public/404.html"),
+];
+const needed = new Set();
+for (const entry of characters) {
+  for (const ch of entry.char) needed.add(ch);
+  for (const ch of entry.exampleWord) needed.add(ch);
+}
+for (const file of uiFiles) {
+  if (!existsSync(file)) continue;
+  for (const ch of readFileSync(file, "utf8")) {
+    if (ch >= "\u4e00" && ch <= "\u9fff") needed.add(ch);
+  }
+}
+const checkPy = `
+from fontTools.ttLib import TTFont
+import json, sys
+font = TTFont(sys.argv[1])
+cmap = {}
+for table in font["cmap"].tables:
+    cmap.update(table.cmap)
+needed = json.loads(sys.argv[2])
+# Optional source font: only require glyphs the source actually has
+src_path = sys.argv[3] if len(sys.argv) > 3 else ""
+src_cmap = None
+if src_path:
+    try:
+        src = TTFont(src_path)
+        src_cmap = {}
+        for table in src["cmap"].tables:
+            src_cmap.update(table.cmap)
+    except Exception:
+        src_cmap = None
+missing = []
+for ch in needed:
+    cp = ord(ch)
+    if src_cmap is not None and cp not in src_cmap:
+        continue  # colloquial UI chars FreeHKKai never had
+    if cp not in cmap:
+        missing.append(ch)
+if missing:
+    print("MISSING:" + "".join(missing))
+    sys.exit(1)
+print("font ok", len(needed), "checked")
+`;
+const srcFont = [
+  "/tmp/freehkfont/Free-HK-Kai_4700-v1.02.ttf",
+  path.join(root, "vendor/Free-HK-Kai_4700-v1.02.ttf"),
+].find((p) => existsSync(p)) || "";
+const pyBins = ["/tmp/fontvenv/bin/python", "python3"];
+let fontCheck = null;
+for (const bin of pyBins) {
+  fontCheck = spawnSync(bin, ["-c", checkPy, fontPath, JSON.stringify([...needed]), srcFont], {
+    encoding: "utf8",
+  });
+  if (fontCheck.error && fontCheck.error.code === "ENOENT") continue;
+  break;
+}
+assert(fontCheck && fontCheck.status === 0, `font subset missing glyphs: ${(fontCheck?.stdout || "") + (fontCheck?.stderr || "")}`);
+
+console.log("check ok: 180 characters / 60 days, stroke files, overrides, dog unlock /4, ball rule, font subset");
+

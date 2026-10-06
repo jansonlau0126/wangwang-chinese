@@ -276,8 +276,32 @@ button, input { font: inherit; color: inherit; }
 .chip.done { color: var(--success); border-color: #b7dfc8; }
 
 .reading, .example, .hint, .stroke-label { margin: 0; }
+.reading-block { display: flex; flex-direction: column; gap: 6px; }
 .reading .name { font-size: 28px; }
-.example { color: var(--text-2); }
+.example {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  color: var(--text);
+}
+.example.center { align-items: center; }
+.example .ex-label {
+  font-size: 16px;
+  color: var(--text-2);
+  font-weight: 600;
+}
+.example .ex-word {
+  font-size: 32px;
+  line-height: 1.25;
+  color: var(--ink);
+  letter-spacing: 0.08em;
+  font-family: "Free HK Kai", "PingFang HK", "Noto Sans HK", serif;
+}
+.example .ex-jyut {
+  font-size: 18px;
+  color: var(--text-2);
+}
 
 .tian-slot {
   flex: 1 1 auto;
@@ -711,7 +735,7 @@ body[data-mode="focus"] #tabs { display: none; }
     gap: 8px 20px;
     align-items: center;
   }
-  .practice .top, .practice .chips, .practice .reading, .practice .example,
+  .practice .top, .practice .chips, .practice .reading-block, .practice .reading, .practice .example,
   .practice .stroke-label, .practice .hint, .practice .actions {
     grid-column: 1;
   }

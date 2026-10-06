@@ -308,8 +308,9 @@ if (!location.hash) history.replaceState({ screen: state.screen }, "", HASH[stat
 warmVoices();
 render();
 
-/** Dev-only test hooks for Playwright (not used in production UI). */
-if (import.meta.env.DEV || typeof window !== "undefined") {
+/** Dev / e2e test hooks — never shipped in production builds. */
+const enableTestHooks = import.meta.env.DEV || import.meta.env.VITE_E2E === "1";
+if (enableTestHooks) {
   window.__WW = {
     getState: () => state,
     save: () => saveState(state),

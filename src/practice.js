@@ -130,10 +130,9 @@ function flashMedian(median) {
 }
 
 function coaching(stage, index, total) {
-  const place = `第 ${index + 1} 筆，共 ${total} 筆`;
-  if (stage === "guided") return `${place}。跟住腳印同箭嘴！`;
-  if (stage === "light") return `${place}。慢慢自己搵起筆。`;
-  return `${place}。加油！`;
+  if (stage === "guided") return "跟住腳印同箭嘴！";
+  if (stage === "light") return "慢慢自己搵起筆。";
+  return "加油！";
 }
 
 export function destroyPractice() {
