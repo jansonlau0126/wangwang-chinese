@@ -1,7 +1,7 @@
 # 汪汪中文 · 第二季「汪汪探險隊」規劃（已對齊 Season 1）
 
 > 最後更新：2026-10-06  
-> 狀態：**主題保留**；文案已按上線版 Season 1 重寫。生字表同若干系統仍係 **待決定**（見 `DECISIONS_AND_TODO.md`）。  
+> 狀態：**主題保留**；已對齊 S1。D1–D3、D5–D9 已決定（建議 A）；D4 家庭模式不做；讀音免錄音方案研究中。  
 > 衝突原文對照：`CONFLICTS.md`
 
 ---
@@ -19,7 +19,7 @@
 | [04-progress-and-challenges.md](04-progress-and-challenges.md) | 進度／挑戰文案 |
 | [05-TODO.md](05-TODO.md) | 指向 DECISIONS（舊清單已淘汰） |
 | [06-reward-system.md](06-reward-system.md) | 獎勵（疊喺 S1 骨頭上） |
-| [07-family-mode.md](07-family-mode.md) | 家庭模式（本機優先） |
+| [07-family-mode.md](07-family-mode.md) | 家庭模式 → **不做** |
 | [08-dog-outfits.md](08-dog-outfits.md) | 換裝／表情延伸（待決定） |
 | [09-sound-and-final.md](09-sound-and-final.md) | 聲音同完季動畫 |
 | [images/momo-expressions/](images/momo-expressions/) | 毛毛表情草稿（資料夾名歷史遺留） |
@@ -103,16 +103,18 @@
 | 故事驅動 | 保留；解鎖語意改「章節／隊友故事」 |
 | 分享卡 | 保留模板；用現有狗相 + 程式出圖（待決定 D7） |
 | 挑戰／連寫 | 只獎唔罰（待決定 D5）；唔亂加骨頭破 cap |
-| 家庭模式 | 本機家長檢視優先（待決定 D4） |
-| 換裝 | 待決定 D3；傾向探險相／表情而非卡通衫 |
-| 音效 | 少量自製 SFX + 自錄讀音長遠（待決定 D8） |
+| 家庭模式 | **不做**（2026-10-06） |
+| 換裝 | **已決定**：探險表情／姿勢相，唔做配件換裝 |
+| 讀音 | **免錄音**方案研究中；SFX 可用合成短音 |
+| 其他 | D1–D3、D5–D9 已跟建議 A（見 DECISIONS） |
 
 ---
 
 ## 6. 下一步
 
-1. 讀 `CONFLICTS.md`、`DECISIONS_AND_TODO.md`  
-2. 拍板 D1／D2／D6／D9  
-3. 先做字表 EDB 核對，再鎖故事入面嘅「今日三個字」對白  
+1. 讀 `DECISIONS_AND_TODO.md`（多數已拍板）  
+2. 策 S2 180 新字 + EDB 核對  
+3. 章節故事填字、狀態機、模板分享卡  
+4. 等免錄音粵語讀音方案拍板後再批量產 mp3  
 
-呢個資料夾淨係規劃；**未批准前唔好當已上線需求。**
+呢個資料夾係規劃；實作前仍要以 `characters.json`／上線 App 為準。
