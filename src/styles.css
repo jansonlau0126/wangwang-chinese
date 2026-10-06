@@ -267,22 +267,22 @@ button, input { font: inherit; color: inherit; }
 
 .tian-slot {
   flex: 1 1 auto;
-  min-height: 180px;
-  container-type: size;
+  min-height: 0;
   display: grid;
   place-items: center;
 }
 
 .tian, .cheer-photo {
-  width: min(100cqw, 100cqh, 70vmin);
-  height: min(100cqw, 100cqh, 70vmin);
+  width: min(70vmin, calc(100dvh - 300px), 100%);
+  aspect-ratio: 1;
+  height: auto;
   position: relative;
   background: var(--surface);
   border: 3px solid var(--grid);
   border-radius: 12px;
 }
 
-.tian { container-type: size; }
+.tian { container-type: inline-size; }
 
 .lines {
   position: absolute;
@@ -332,7 +332,7 @@ button, input { font: inherit; color: inherit; }
   inset: 0;
   display: grid;
   place-items: center;
-  font-size: 62cqmin;
+  font-size: 62cqi;
   line-height: 1;
   color: var(--ink);
 }
