@@ -1,0 +1,7 @@
+{
+  "出": {
+    "order": [3, 1, 2, 4, 5],
+    "reverse": [],
+    "note": "Hong Kong EDB order differs from hanzi-writer-data (mainland). order is 1-based indices of the original strokes in the order to teach: long centre vertical, upper-left fold, upper-right vertical, lower-left fold, lower-right vertical. Checked 2026-10-06 against the EDB animation (stkdemo 0321)."
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "name": "汪汪中文",
+  "short_name": "汪汪中文",
+  "lang": "zh-HK",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F8FB",
+  "theme_color": "#F4F8FB",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
