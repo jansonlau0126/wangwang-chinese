@@ -877,7 +877,7 @@
     "exampleWord": "哥哥",
     "exampleJyutping": "go1 go1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 30,
@@ -887,17 +887,17 @@
     "exampleWord": "弟弟",
     "exampleJyutping": "dai6 dai2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 30,
-    "char": "姊",
-    "strokes": 7,
-    "jyutping": "zi2",
-    "exampleWord": "姊妹",
-    "exampleJyutping": "zi2 mui6",
+    "char": "姐",
+    "strokes": 8,
+    "jyutping": "ze2",
+    "exampleWord": "姐姐",
+    "exampleJyutping": "ze2 ze2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 31,
@@ -907,7 +907,7 @@
     "exampleWord": "妹妹",
     "exampleJyutping": "mui6 mui2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 31,
@@ -917,7 +917,7 @@
     "exampleWord": "兒童",
     "exampleJyutping": "ji4 tung4",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 31,
@@ -927,7 +927,7 @@
     "exampleWord": "兄弟",
     "exampleJyutping": "hing1 dai6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 32,
@@ -937,7 +937,7 @@
     "exampleWord": "朋友",
     "exampleJyutping": "pang4 jau5",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 32,
@@ -947,7 +947,7 @@
     "exampleWord": "名字",
     "exampleJyutping": "ming4 zi6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 32,
@@ -957,7 +957,7 @@
     "exampleWord": "先生",
     "exampleJyutping": "sin1 saang1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 33,
@@ -967,7 +967,7 @@
     "exampleWord": "公園",
     "exampleJyutping": "gung1 jyun2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 33,
@@ -1007,7 +1007,7 @@
     "exampleWord": "去到",
     "exampleJyutping": "heoi3 dou3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 34,
@@ -1017,7 +1017,7 @@
     "exampleWord": "說話",
     "exampleJyutping": "syut3 waa6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 35,
@@ -1027,7 +1027,7 @@
     "exampleWord": "聽見",
     "exampleJyutping": "ting1 gin3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 35,
@@ -1037,7 +1037,7 @@
     "exampleWord": "思想",
     "exampleJyutping": "si1 soeng2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 35,
@@ -1047,7 +1047,7 @@
     "exampleWord": "可愛",
     "exampleJyutping": "ho2 oi3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 36,
@@ -1057,7 +1057,7 @@
     "exampleWord": "吃飯",
     "exampleJyutping": "hek3 faan6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 36,
@@ -1067,7 +1067,7 @@
     "exampleWord": "喝水",
     "exampleJyutping": "hot3 seoi2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 36,
@@ -1077,7 +1077,7 @@
     "exampleWord": "好玩",
     "exampleJyutping": "hou2 waan2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 37,
@@ -1087,7 +1087,7 @@
     "exampleWord": "跑步",
     "exampleJyutping": "paau2 bou6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 37,
@@ -1097,7 +1097,7 @@
     "exampleWord": "跳舞",
     "exampleJyutping": "tiu3 mou5",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 37,
@@ -1107,7 +1107,7 @@
     "exampleWord": "坐下",
     "exampleJyutping": "co5 haa6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 38,
@@ -1117,17 +1117,17 @@
     "exampleWord": "站立",
     "exampleJyutping": "zaam6 lap6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 38,
-    "char": "睡",
-    "strokes": 13,
-    "jyutping": "seoi6",
+    "char": "覺",
+    "strokes": 20,
+    "jyutping": "gaau3",
     "exampleWord": "睡覺",
     "exampleJyutping": "seoi6 gaau3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 38,
@@ -1137,17 +1137,17 @@
     "exampleWord": "歡笑",
     "exampleJyutping": "fun1 siu3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 39,
-    "char": "高",
-    "strokes": 10,
-    "jyutping": "gou1",
-    "exampleWord": "高興",
-    "exampleJyutping": "gou1 hing3",
+    "char": "平",
+    "strokes": 5,
+    "jyutping": "ping4",
+    "exampleWord": "平日",
+    "exampleJyutping": "ping4 jat6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 39,
@@ -1157,17 +1157,17 @@
     "exampleWord": "低頭",
     "exampleJyutping": "dai1 tau4",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 39,
-    "char": "長",
+    "char": "直",
     "strokes": 8,
-    "jyutping": "coeng4",
-    "exampleWord": "長短",
-    "exampleJyutping": "coeng4 dyun2",
+    "jyutping": "zik6",
+    "exampleWord": "直線",
+    "exampleJyutping": "zik6 sin3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 40,
@@ -1177,7 +1177,7 @@
     "exampleWord": "短褲",
     "exampleJyutping": "dyun2 fu3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 40,
@@ -1187,7 +1187,7 @@
     "exampleWord": "多少",
     "exampleJyutping": "do1 siu2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 40,
@@ -1197,7 +1197,7 @@
     "exampleWord": "很少",
     "exampleJyutping": "han2 siu2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 41,
@@ -1207,7 +1207,7 @@
     "exampleWord": "新年",
     "exampleJyutping": "san1 nin4",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 41,
@@ -1217,27 +1217,27 @@
     "exampleWord": "舊書",
     "exampleJyutping": "gau6 syu1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 41,
-    "char": "遠",
-    "strokes": 13,
-    "jyutping": "jyun5",
-    "exampleWord": "遠方",
-    "exampleJyutping": "jyun5 fong1",
+    "char": "旁",
+    "strokes": 10,
+    "jyutping": "pong4",
+    "exampleWord": "旁邊",
+    "exampleJyutping": "pong4 bin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 42,
-    "char": "近",
-    "strokes": 7,
-    "jyutping": "gan6",
-    "exampleWord": "走近",
-    "exampleJyutping": "zau2 gan6",
+    "char": "前",
+    "strokes": 9,
+    "jyutping": "cin4",
+    "exampleWord": "前面",
+    "exampleJyutping": "cin4 min6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 42,
@@ -1247,7 +1247,7 @@
     "exampleWord": "今天",
     "exampleJyutping": "gam1 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 42,
@@ -1257,7 +1257,7 @@
     "exampleWord": "明天",
     "exampleJyutping": "ming4 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 43,
@@ -1267,7 +1267,7 @@
     "exampleWord": "昨天",
     "exampleJyutping": "zok3 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 43,
@@ -1277,7 +1277,7 @@
     "exampleWord": "中午",
     "exampleJyutping": "zung1 ng5",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 43,
@@ -1287,7 +1287,7 @@
     "exampleWord": "星星",
     "exampleJyutping": "sing1 sing1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 44,
@@ -1297,17 +1297,17 @@
     "exampleWord": "陽光",
     "exampleJyutping": "joeng4 gwong1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 44,
-    "char": "電",
-    "strokes": 13,
-    "jyutping": "din6",
-    "exampleWord": "電話",
-    "exampleJyutping": "din6 waa6",
+    "char": "機",
+    "strokes": 16,
+    "jyutping": "gei1",
+    "exampleWord": "飛機",
+    "exampleJyutping": "fei1 gei1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 44,
@@ -1317,7 +1317,7 @@
     "exampleWord": "空氣",
     "exampleJyutping": "hung1 hei3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 45,
@@ -1327,7 +1327,7 @@
     "exampleWord": "大樹",
     "exampleJyutping": "daai6 syu6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 45,
@@ -1337,7 +1337,7 @@
     "exampleWord": "樹葉",
     "exampleJyutping": "syu6 jip6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 45,
@@ -1347,27 +1347,27 @@
     "exampleWord": "水果",
     "exampleJyutping": "seoi2 gwo2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 46,
-    "char": "菜",
+    "char": "豆",
+    "strokes": 7,
+    "jyutping": "dau6",
+    "exampleWord": "黃豆",
+    "exampleJyutping": "wong4 dau6",
+    "strokeSource": "hwd",
+    "verifiedAgainstEdb": "2026-10-06"
+  },
+  {
+    "day": 46,
+    "char": "晚",
     "strokes": 11,
-    "jyutping": "coi3",
-    "exampleWord": "青菜",
-    "exampleJyutping": "cing1 coi3",
+    "jyutping": "maan5",
+    "exampleWord": "晚上",
+    "exampleJyutping": "maan5 soeng6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
-  },
-  {
-    "day": 46,
-    "char": "飯",
-    "strokes": 12,
-    "jyutping": "faan5",
-    "exampleWord": "米飯",
-    "exampleJyutping": "mai5 faan6",
-    "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 46,
@@ -1377,7 +1377,7 @@
     "exampleWord": "牛肉",
     "exampleJyutping": "ngau4 juk6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 47,
@@ -1387,7 +1387,7 @@
     "exampleWord": "雞蛋",
     "exampleJyutping": "gai1 daan6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 47,
@@ -1397,17 +1397,17 @@
     "exampleWord": "糖果",
     "exampleJyutping": "tong4 gwo2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 47,
-    "char": "頭",
-    "strokes": 16,
-    "jyutping": "tau4",
-    "exampleWord": "開頭",
-    "exampleJyutping": "hoi1 tau4",
+    "char": "臉",
+    "strokes": 17,
+    "jyutping": "lim5",
+    "exampleWord": "洗臉",
+    "exampleJyutping": "sai2 lim5",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 48,
@@ -1417,27 +1417,27 @@
     "exampleWord": "眼睛",
     "exampleJyutping": "ngaan5 zing1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 48,
-    "char": "鼻",
-    "strokes": 14,
-    "jyutping": "bat6",
-    "exampleWord": "鼻子",
-    "exampleJyutping": "bei6 zi2",
+    "char": "舌",
+    "strokes": 6,
+    "jyutping": "sit3",
+    "exampleWord": "舌頭",
+    "exampleJyutping": "sit3 tau4",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 48,
-    "char": "身",
-    "strokes": 7,
-    "jyutping": "gyun1",
-    "exampleWord": "身體",
-    "exampleJyutping": "san1 tai2",
+    "char": "肢",
+    "strokes": 8,
+    "jyutping": "zi1",
+    "exampleWord": "四肢",
+    "exampleJyutping": "sei3 zi1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 49,
@@ -1447,7 +1447,7 @@
     "exampleWord": "學校",
     "exampleJyutping": "hok6 haau6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 49,
@@ -1457,7 +1457,7 @@
     "exampleWord": "老師",
     "exampleJyutping": "lou5 si1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 49,
@@ -1467,7 +1467,7 @@
     "exampleWord": "老師",
     "exampleJyutping": "lou5 si1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 50,
@@ -1477,7 +1477,7 @@
     "exampleWord": "同學",
     "exampleJyutping": "tung4 hok6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 50,
@@ -1487,7 +1487,7 @@
     "exampleWord": "讀書",
     "exampleJyutping": "duk6 syu1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 50,
@@ -1497,7 +1497,7 @@
     "exampleWord": "寫字",
     "exampleJyutping": "se2 zi6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 51,
@@ -1507,7 +1507,7 @@
     "exampleWord": "毛筆",
     "exampleJyutping": "mou4 bat1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 51,
@@ -1517,7 +1517,7 @@
     "exampleWord": "白紙",
     "exampleJyutping": "baak6 zi2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 51,
@@ -1527,7 +1527,7 @@
     "exampleWord": "一班",
     "exampleJyutping": "jat1 baan1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 52,
@@ -1537,7 +1537,7 @@
     "exampleWord": "新年",
     "exampleJyutping": "san1 nin4",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 52,
@@ -1547,7 +1547,7 @@
     "exampleWord": "幾歲",
     "exampleJyutping": "gei2 seoi3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 52,
@@ -1557,7 +1557,7 @@
     "exampleWord": "時間",
     "exampleJyutping": "si4 gaan3",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 53,
@@ -1567,7 +1567,7 @@
     "exampleWord": "一分",
     "exampleJyutping": "jat1 fan1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 53,
@@ -1577,17 +1577,17 @@
     "exampleWord": "一秒",
     "exampleJyutping": "jat1 miu5",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 53,
-    "char": "開",
-    "strokes": 12,
-    "jyutping": "hoi1",
-    "exampleWord": "開門",
-    "exampleJyutping": "hoi1 mun4",
+    "char": "啟",
+    "strokes": 11,
+    "jyutping": "kai2",
+    "exampleWord": "啟程",
+    "exampleJyutping": "kai2 cing4",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 54,
@@ -1597,7 +1597,7 @@
     "exampleWord": "窗戶",
     "exampleJyutping": "coeng1 wu6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 54,
@@ -1607,17 +1607,17 @@
     "exampleWord": "房間",
     "exampleJyutping": "fong4 gaan1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 54,
-    "char": "床",
-    "strokes": 7,
-    "jyutping": "cong4",
-    "exampleWord": "起床",
-    "exampleJyutping": "hei2 cong4",
+    "char": "椅",
+    "strokes": 12,
+    "jyutping": "ji2",
+    "exampleWord": "椅子",
+    "exampleJyutping": "ji2 zi2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 55,
@@ -1627,17 +1627,17 @@
     "exampleWord": "帽子",
     "exampleJyutping": "mou6 zi2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 55,
-    "char": "鞋",
+    "char": "褲",
     "strokes": 15,
-    "jyutping": "haai4",
-    "exampleWord": "鞋子",
-    "exampleJyutping": "haai4 zi2",
+    "jyutping": "fu3",
+    "exampleWord": "褲子",
+    "exampleJyutping": "fu3 zi2",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 55,
@@ -1647,7 +1647,7 @@
     "exampleWord": "南方",
     "exampleJyutping": "naam4 fong1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 56,
@@ -1657,7 +1657,7 @@
     "exampleWord": "北方",
     "exampleJyutping": "bak1 fong1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 56,
@@ -1667,7 +1667,7 @@
     "exampleWord": "春天",
     "exampleJyutping": "ceon1 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 56,
@@ -1677,7 +1677,7 @@
     "exampleWord": "秋天",
     "exampleJyutping": "cau1 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 57,
@@ -1687,7 +1687,7 @@
     "exampleWord": "夏天",
     "exampleJyutping": "haa6 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 57,
@@ -1697,17 +1697,17 @@
     "exampleWord": "冬天",
     "exampleJyutping": "dung1 tin1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 57,
-    "char": "金",
-    "strokes": 8,
-    "jyutping": "gam1",
-    "exampleWord": "金子",
-    "exampleJyutping": "gam1 zi2",
+    "char": "幣",
+    "strokes": 14,
+    "jyutping": "bai6",
+    "exampleWord": "紙幣",
+    "exampleJyutping": "zi2 bai6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 58,
@@ -1717,17 +1717,17 @@
     "exampleWord": "紅色",
     "exampleJyutping": "hung4 sik1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 58,
-    "char": "黃",
+    "char": "紫",
     "strokes": 12,
-    "jyutping": "wong4",
-    "exampleWord": "黃色",
-    "exampleJyutping": "wong4 sik1",
+    "jyutping": "zi2",
+    "exampleWord": "紫色",
+    "exampleJyutping": "zi2 sik1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 58,
@@ -1737,7 +1737,7 @@
     "exampleWord": "藍色",
     "exampleJyutping": "laam4 sik1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 59,
@@ -1747,17 +1747,17 @@
     "exampleWord": "綠色",
     "exampleJyutping": "luk6 sik1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 59,
-    "char": "黑",
-    "strokes": 12,
-    "jyutping": "hak1",
-    "exampleWord": "黑色",
-    "exampleJyutping": "hak1 sik1",
+    "char": "灰",
+    "strokes": 6,
+    "jyutping": "fui1",
+    "exampleWord": "灰色",
+    "exampleJyutping": "fui1 sik1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 59,
@@ -1777,7 +1777,7 @@
     "exampleWord": "可以",
     "exampleJyutping": "ho2 ji5",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 60,
@@ -1787,7 +1787,7 @@
     "exampleWord": "學會",
     "exampleJyutping": "hok6 wui6",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   },
   {
     "day": 60,
@@ -1797,6 +1797,6 @@
     "exampleWord": "用心",
     "exampleJyutping": "jung6 sam1",
     "strokeSource": "hwd",
-    "verifiedAgainstEdb": false
+    "verifiedAgainstEdb": "2026-10-06"
   }
 ]

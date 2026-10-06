@@ -37,6 +37,10 @@ function boneBadge(state) {
   return `<div class="bone-badge" title="今日仲可以攞 ${left} 嚿骨頭"><span class="bone-ico" aria-hidden="true">🦴</span><b>${state.bones || 0}</b></div>`;
 }
 
+function brandHtml(label = "汪汪中文") {
+  return `<div class="brand"><img class="brand-logo" src="/icons/logo-head-96.png" alt="" width="32" height="32"><span>${label}</span></div>`;
+}
+
 export function esc(value) {
   return String(value).replace(/[&<>"']/g, (ch) => ({
     "&": "&amp;",
@@ -132,7 +136,7 @@ export function renderHome(state) {
   const title = seasonDone ? "第一季寫完喇！繼續溫習攞骨頭" : `第 ${day} 日 · 第 ${week} 週`;
   return `<div class="page" data-screen="home">
     <header class="top">
-      <div class="brand">汪汪中文</div>
+      ${brandHtml()}
       ${boneBadge(state)}
       <button type="button" class="who" data-act="tab" data-tab="dogs">${dogFace(state, homePose(state))}<span>${esc(name)}</span></button>
     </header>
@@ -309,7 +313,7 @@ export function renderMap(state) {
   }
 
   return `<div class="page map-page" data-screen="map">
-    <header class="top"><div class="brand">進度地圖</div></header>
+    <header class="top">${brandHtml("進度地圖")}</header>
     <p class="lead">沿著狗狗公園小路行！每寫完 4 日就會遇到新朋友。而家完成咗 ${state.completedDays.length} 日。</p>
     <div class="trail-scene" id="trail-scene">
       <svg class="trail-svg" viewBox="0 0 ${W} ${height}" width="100%" aria-hidden="true">
@@ -460,7 +464,7 @@ export function renderReward(state) {
     ? "溫習 3 個字寫好咗，攞骨頭啦！"
     : `第 ${reward.day} 日 3 個字都寫好咗，攞骨頭啦！`;
   return `<div class="page reward" data-screen="reward">
-    <header class="top"><div class="brand">汪汪中文</div>${boneBadge(state)}</header>
+    <header class="top">${brandHtml()}${boneBadge(state)}</header>
     <section class="card celebrate">
       <p class="kicker">${kicker}</p>
       <h1>${newbie ? `識到新朋友：${esc(newbie.name)}` : `${esc(companion.name)}好開心`}</h1>
@@ -501,7 +505,7 @@ export function renderDogs(state) {
     </button>`;
   }).join("");
   return `<div class="page" data-screen="dogs">
-    <header class="top"><div class="brand">狗狗圖鑑</div>${boneBadge(state)}</header>
+    <header class="top">${brandHtml("狗狗圖鑑")}${boneBadge(state)}</header>
     <p class="lead">已識 ${unlocked} / ${dogs.length} 隻。撳隻狗睇相簿，用骨頭換相。每寫完 4 日多一隻朋友。</p>
     <div class="dog-grid">${cards}</div>
   </div>`;
@@ -600,7 +604,7 @@ export function renderCards(state) {
   const learned = list.filter((entry) => isDayDone(state, entry.day)).length;
   return `<div class="page cards" data-screen="cards">
     <header class="top">
-      <div class="brand">生字卡</div>
+      ${brandHtml("生字卡")}
       ${boneBadge(state)}
       <div class="dots" aria-label="週次">${dots}</div>
     </header>
@@ -659,7 +663,7 @@ export function renderAbout(state) {
     ? `<table><caption>練習記錄（畀家長睇，唔係分數）</caption><thead><tr><th>字</th><th>提示次數</th></tr></thead><tbody>${rows.map((row) => `<tr><td class="kai">${esc(row.char)}</td><td>${row.hints}</td></tr>`).join("")}</tbody></table>`
     : '<p class="muted">未有記錄。寫完一個字就會記低。</p>';
   return `<div class="page about" data-screen="about">
-    <header class="top"><div class="brand">關於我</div></header>
+    <header class="top">${brandHtml("關於我")}</header>
     <section class="card prose">
       <h1>汪汪中文</h1>
       <p>香港小學生用嘅筆順描紅練習。每日 3 個字，同小狗一齊寫。寫完攞骨頭換狗狗相。寫錯可以再試，冇愛心，冇扣分。</p>

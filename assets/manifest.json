@@ -322,5 +322,19 @@
         "ball": "assets/poses/15-dawang-akita-ball.webp"
       }
     }
-  ]
+  ],
+  "icons": {
+    "draft": true,
+    "source": "AI-generated draft",
+    "note": "毛毛 over 田字格 notebook; head crop for favicons",
+    "files": {
+      "full": "public/icons/icon-512.png",
+      "maskable": "public/icons/maskable-512.png",
+      "apple": "public/icons/apple-touch-icon.png",
+      "favicon32": "public/icons/favicon-32.png",
+      "favicon16": "public/icons/favicon-16.png",
+      "faviconIco": "public/favicon.ico",
+      "logoHead": "public/icons/logo-head-96.png"
+    }
+  }
 }

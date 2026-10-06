@@ -1056,3 +1056,19 @@ body[data-mode="focus"] #tabs { display: none; }
 .top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .top .brand { flex: 1; min-width: 0; }
 .week-sign { pointer-events: none; }
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: var(--accent-deep);
+}
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  object-fit: cover;
+  box-shadow: 0 2px 0 rgba(47, 100, 80, 0.12);
+  flex-shrink: 0;
+}
