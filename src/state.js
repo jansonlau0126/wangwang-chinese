@@ -372,6 +372,7 @@ function completeWarmup(state) {
     ball,
     newDog: null,
     day: null,
+    chars: state.active?.queue ? [...state.active.queue] : [],
   };
   state.active = null;
   state.savedActive = null;

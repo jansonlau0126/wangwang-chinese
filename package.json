@@ -9,9 +9,7 @@
     "build": "node scripts/check.mjs && vite build",
     "preview": "vite preview",
     "strokes": "node scripts/build-strokes.mjs",
-    "check": "node scripts/check.mjs",
-    "audio": "node scripts/gen-audio-azure.mjs",
-    "audio:dry": "node scripts/gen-audio-azure.mjs --dry-run"
+    "check": "node scripts/check.mjs"
   },
   "repository": {
     "type": "git",

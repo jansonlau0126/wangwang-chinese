@@ -84,9 +84,6 @@ assert(POSE_COSTS.happy === 4 && POSE_COSTS["act-b"] === 6, "pose costs");
   console.log(`unlock sim: ${sim.realistic.weeks} weeks, binge ≥ ${sim.binge.minDaysForPaidPoses} days, ${sim.TOTAL_PAID_BONES} bones`);
 }
 
-const manifest = JSON.parse(readFileSync(path.join(root, "data/audio-manifest.json"), "utf8"));
-assert(Array.isArray(manifest.files), "audio manifest must list files");
-
 // Font subset must cover every character + exampleWord glyph (and UI CJK that FreeHKKai has).
 const fontPath = path.join(root, "public/fonts/FreeHKKai-subset.woff2");
 assert(existsSync(fontPath), "missing FreeHKKai subset woff2");

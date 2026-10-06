@@ -1072,3 +1072,61 @@ body[data-mode="focus"] #tabs { display: none; }
   box-shadow: 0 2px 0 rgba(47, 100, 80, 0.12);
   flex-shrink: 0;
 }
+
+
+/* Device TTS: muted speak when no Cantonese voice */
+.btn.speak-muted {
+  opacity: 0.55;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+.btn.speak-muted [data-speak-icon] {
+  text-decoration: line-through;
+  filter: grayscale(1);
+}
+
+.voice-notice {
+  margin: 12px 16px 0;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #fff6e8;
+  border: 2px solid #e8b86d;
+  color: var(--text);
+  font-weight: 700;
+  box-shadow: 0 4px 0 rgba(47, 100, 80, 0.08);
+}
+.voice-notice p { margin: 0 0 6px; }
+.voice-notice-sub { font-weight: 600; color: var(--text-2); font-size: 0.95em; }
+.voice-notice .btn { margin-top: 4px; }
+
+.reward-chars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin: 8px 0 12px;
+}
+.reward-char {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 64px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: #f3faf6;
+  border: 2px solid #cfe8d9;
+}
+.reward-char .kai { font-size: 32px; line-height: 1.1; }
+.reward-char .jyut { font-size: 14px; font-weight: 700; }
+
+.voice-help .voice-steps {
+  padding-left: 1.2em;
+  margin: 8px 0 12px;
+}
+.voice-help .voice-steps li { margin: 8px 0; }
+
+.tile .jyut, .vc-cell .jyut {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.big-jyut { letter-spacing: 0.03em; }

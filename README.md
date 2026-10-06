@@ -27,7 +27,7 @@
 - 設計：[`docs/DESIGN.md`](./docs/DESIGN.md)
 - 第一季字表：[`docs/CHARACTERS_PHASE1.md`](./docs/CHARACTERS_PHASE1.md)
 - 筆順：[`docs/STROKE_ORDER.md`](./docs/STROKE_ORDER.md)
-- 粵語讀音及音檔：[`docs/CANTONESE.md`](./docs/CANTONESE.md)
+- 粵語讀音（裝置 TTS + 粵拼）：[`docs/CANTONESE.md`](./docs/CANTONESE.md)
 - 第二季規劃（汪汪探險隊）：[`docs/season2/`](./docs/season2/README.md)
 - 素材：`assets/`（狗狗相片為 **AI 生成草稿**）
 
@@ -49,10 +49,8 @@ npm run dev
 | `npm run build` | 檢查字表／筆順，再輸出 `dist/` |
 | `npm run check` | 180 字／60 日、筆畫檔、解鎖規則 |
 | `npm run strokes` | 由 hanzi-writer-data 同 overrides 重寫 `data/strokes/` |
-| `npm run audio:dry` | 預覽 Azure 音檔生成（唔打 API） |
-| `npm run audio` | 用 Azure Speech 生成 360 個 mp3（要 `AZURE_SPEECH_KEY`／`REGION`） |
 
-粵語聲音：`assets/audio/U+XXXX.mp3` 同 `U+XXXX_word.mp3`（見 `data/audio-manifest.json`）；未有檔案就用瀏覽器 `zh-HK`／`yue` 語音。
+粵語讀音：裝置 `speechSynthesis`（粵語／zh-HK）；永遠顯示粵拼；無粵語聲就唔播、唔改用普通話。詳見 [`docs/CANTONESE.md`](./docs/CANTONESE.md)。
 
 ## Cloudflare Pages
 

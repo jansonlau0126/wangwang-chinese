@@ -450,6 +450,21 @@ function boneEarnLine(reward) {
   return `<p class="bone-earn">今日攞到 <b>+${earned.length}</b> 骨頭（${bits}）· 今日 ${reward.bonesToday || earned.length}/2</p>`;
 }
 
+
+function rewardCharsHtml(reward) {
+  let list = [];
+  if (reward.kind === "warmup" && Array.isArray(reward.chars)) {
+    list = reward.chars.map((ch) => characters.find((e) => e.char === ch)).filter(Boolean);
+  } else if (reward.day) {
+    list = dayChars(reward.day);
+  }
+  if (!list.length) return "";
+  const bits = list.map((entry) =>
+    `<span class="reward-char"><span class="kai">${esc(entry.char)}</span><span class="jyut">${esc(entry.jyutping)}</span></span>`
+  ).join("");
+  return `<div class="reward-chars" aria-label="今日字">${bits}</div>`;
+}
+
 export function renderReward(state) {
   const reward = state.pendingReward;
   if (!reward) return renderHome(state);
@@ -469,6 +484,7 @@ export function renderReward(state) {
       <p class="kicker">${kicker}</p>
       <h1>${newbie ? `識到新朋友：${esc(newbie.name)}` : `${esc(companion.name)}好開心`}</h1>
       <p class="muted">${subtitle}</p>
+      ${rewardCharsHtml(reward)}
       ${boneEarnLine(reward)}
       <img class="reward-photo" src="${esc(poseSrc(star, "happy"))}" alt="${esc(star.name)}">
       <p class="breed">${esc(star.breed.zh)}</p>
@@ -597,7 +613,7 @@ export function renderCards(state) {
     const done = isDayDone(state, entry.day);
     return `<button type="button" class="vc-cell${done ? " done" : ""}" style="background:${bg}" data-act="open-card" data-char="${esc(entry.char)}">
       <span class="kai">${esc(entry.char)}</span>
-      <small>${esc(entry.jyutping)}</small>
+      <small class="jyut">${esc(entry.jyutping)}</small>
       <span class="ex">${esc(entry.exampleWord)}</span>
     </button>`;
   }).join("");
@@ -649,7 +665,7 @@ function cardDetailHtml(state) {
         <span class="jyut ex-jyut">${esc(entry.exampleJyutping)}</span>
       </div>
       <div class="audio-row">
-        <button type="button" class="btn ab" data-act="speak-card" data-char="${esc(entry.char)}" data-slow="0"><span aria-hidden="true">🔊</span>聽讀音</button>
+        <button type="button" class="btn ab" data-act="speak-card" data-char="${esc(entry.char)}" data-slow="0"><span data-speak-icon aria-hidden="true">🔊</span>聽讀音</button>
         <button type="button" class="btn ghost ab" data-act="speak-card" data-char="${esc(entry.char)}" data-slow="1"><span aria-hidden="true">🐢</span>慢速</button>
       </div>
       <button type="button" class="btn" data-act="review" data-char="${esc(entry.char)}">再寫一次</button>
@@ -676,7 +692,18 @@ export function renderAbout(state) {
         <li>狗狗相係 AI 草稿，之後會換真實相片。</li>
       </ul>
       <p><a href="/licenses.txt">完整授權條款</a></p>
-      <p class="muted">粵語聲音：有預先錄好嘅檔案（assets/audio/U+XXXX.mp3）就播檔案；未有就用裝置嘅粵語（zh-HK）聲音。冇粵語聲音就只顯示粵拼，唔會改用普通話。</p>
+    </section>
+    <section class="card prose voice-help">
+      <h2>粵語讀音</h2>
+      <p>用你部機／瀏覽器嘅<strong>廣東話（香港）</strong>聲音讀字。唔會下載錄音，亦唔會改用普通話聲。每個字都會顯示粵拼（帶調號），冇聲都可以跟住讀。</p>
+      <p>如果聽到「呢部機未有廣東話聲」：</p>
+      <ul class="voice-steps">
+        <li><strong>iPhone／iPad：</strong>「設定」→「輔助使用」→「朗讀內容」→「聲音」→ 下載／揀 <strong>中文（香港）</strong> 或標明粵語嘅聲（例如 Sin-ji）。</li>
+        <li><strong>Android：</strong>安裝或開「Google 語音服務」／文字轉語音設定，加入 <strong>粵語（香港）</strong>，並設為可用聲。</li>
+        <li><strong>Windows：</strong>「設定」→「時間同語言」→「語音」／「語音」，睇下有冇香港中文／粵語聲；Chrome／Edge 用系統已安裝嘅聲。</li>
+        <li><strong>Mac：</strong>「系統設定」→「輔助使用」→「朗讀內容」→「系統聲音」，下載中文（香港）相關聲。</li>
+      </ul>
+      <p class="muted">唔同系統選單名可能略有分別；重點係裝好／揀 <strong>粵語（香港）／zh-HK</strong>，唔好揀普通話。</p>
     </section>
     <section class="card">${body}</section>
   </div>`;

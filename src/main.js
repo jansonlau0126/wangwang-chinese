@@ -1,4 +1,12 @@
-import { playReading, stopAudio, warmVoices } from "./audio.js";
+import {
+  hasCantoneseVoice,
+  markNoVoiceNoticeSeen,
+  playReading,
+  shouldShowNoVoiceNotice,
+  stopAudio,
+  warmVoices,
+  whenVoicesReady,
+} from "./audio.js";
 import { destroyPractice, mountPractice } from "./practice.js";
 import "./styles.css";
 import {
@@ -105,16 +113,7 @@ function render() {
   if (state.screen === "practice" && state.active && entry) {
     const stage = state.active.stage;
     if (stage === "listen") {
-      playReading(entry).then((result) => {
-        if (pass !== renderLock || state.active?.stage !== "listen") return;
-        if (result.char === "none") {
-          const hint = document.getElementById("hint");
-          if (hint) {
-            hint.textContent = "未有粵語聲音，睇住粵拼跟住讀啦！";
-            hint.classList.add("is-warn");
-          }
-        }
-      });
+      refreshListenUi();
     } else if (stage === "watch" || stage === "guided" || stage === "light" || stage === "free") {
       requestAnimationFrame(() => {
         if (pass !== renderLock) return;
@@ -137,7 +136,66 @@ function render() {
       });
     }
   }
+  updateSpeakButtons();
 }
+
+function refreshListenUi() {
+  const hint = document.getElementById("hint");
+  if (!hint || state.active?.stage !== "listen") return;
+  whenVoicesReady().then((ok) => {
+    if (state.active?.stage !== "listen") return;
+    if (!ok) {
+      hint.textContent = "呢部機未有廣東話聲，可以睇住拼音讀。";
+      hint.classList.add("is-warn");
+      maybeShowNoVoiceNotice();
+    }
+    updateSpeakButtons();
+  });
+}
+
+function maybeShowNoVoiceNotice() {
+  if (hasCantoneseVoice()) return;
+  if (!shouldShowNoVoiceNotice()) return;
+  markNoVoiceNoticeSeen();
+  const host = document.getElementById("main");
+  if (!host || host.querySelector(".voice-notice")) return;
+  const box = document.createElement("div");
+  box.className = "voice-notice";
+  box.setAttribute("role", "status");
+  box.innerHTML = `<p>呢部機未有廣東話聲，可以睇住拼音讀。</p>
+    <p class="voice-notice-sub">去「我」頁睇點樣加粵語聲音。</p>
+    <button type="button" class="btn ghost tiny" data-act="dismiss-voice-notice">知喇</button>`;
+  host.prepend(box);
+}
+
+function updateSpeakButtons() {
+  const ok = hasCantoneseVoice();
+  document.querySelectorAll("[data-act='speak-card']").forEach((btn) => {
+    btn.classList.toggle("speak-muted", !ok);
+    btn.setAttribute("aria-disabled", ok ? "false" : "true");
+    const icon = btn.querySelector("[data-speak-icon]");
+    if (icon) icon.textContent = ok ? "🔊" : "🔇";
+  });
+}
+
+/** Speak from a user gesture (iOS requires this). */
+function speakListenIfNeeded(opts = {}) {
+  const entry = currentEntry(state);
+  if (!(state.screen === "practice" && state.active?.stage === "listen" && entry)) return;
+  playReading(entry, { slow: Boolean(state.active?.slow) || Boolean(opts.slow) }).then((result) => {
+    if (state.active?.stage !== "listen") return;
+    const hint = document.getElementById("hint");
+    if (!result.voice) {
+      if (hint) {
+        hint.textContent = "呢部機未有廣東話聲，可以睇住拼音讀。";
+        hint.classList.add("is-warn");
+      }
+      maybeShowNoVoiceNotice();
+    }
+    updateSpeakButtons();
+  });
+}
+
 
 function show(screen) {
   state.screen = screen;
@@ -155,6 +213,12 @@ function refresh() {
 function speakCard(char, wantSlow) {
   const entry = findChar(char);
   if (!entry) return;
+  if (!hasCantoneseVoice()) {
+    maybeShowNoVoiceNotice();
+    updateSpeakButtons();
+    toast("呢部機未有廣東話聲，可以睇住拼音讀。");
+    return;
+  }
   const key = char;
   const now = Date.now();
   const dbl = lastSpeak.key === key && now - lastSpeak.t < 300;
@@ -175,14 +239,22 @@ function onClick(event) {
     show(button.dataset.tab || "home");
     return;
   }
+  if (act === "dismiss-voice-notice") {
+    const n = document.querySelector(".voice-notice");
+    if (n) n.remove();
+    return;
+  }
   if (act === "start") {
     startPractice(state);
     show("practice");
+    speakListenIfNeeded();
     return;
   }
   if (act === "warmup") {
-    if (startWarmup(state)) show("practice");
-    else toast("未有溫習字。先寫幾日新字啦！");
+    if (startWarmup(state)) {
+      show("practice");
+      speakListenIfNeeded();
+    } else toast("未有溫習字。先寫幾日新字啦！");
     return;
   }
   if (act === "tile") {
@@ -190,9 +262,11 @@ function onClick(event) {
     if (status === "done") {
       beginReview(state, button.dataset.char, "home");
       show("practice");
+      speakListenIfNeeded();
     } else if (status === "now" || status === "next") {
       startPractice(state);
       show("practice");
+      speakListenIfNeeded();
     } else {
       toast("先寫前面個字啦！");
     }
@@ -201,6 +275,7 @@ function onClick(event) {
   if (act === "review") {
     beginReview(state, button.dataset.char, "cards");
     show("practice");
+    speakListenIfNeeded();
     return;
   }
   if (act === "open-card") {
@@ -240,12 +315,12 @@ function onClick(event) {
     button.disabled = true;
     goNextStage(state);
     show(state.screen);
+    speakListenIfNeeded();
     return;
   }
   if (act === "retry") {
     if (state.active?.stage === "listen") {
-      const entry = currentEntry(state);
-      if (entry) playReading(entry);
+      speakListenIfNeeded();
       return;
     }
     retryStage(state);
@@ -349,9 +424,10 @@ window.addEventListener("popstate", () => {
 applyStoredScreenFromHash();
 if (!location.hash) history.replaceState({ screen: state.screen }, "", HASH[state.screen] || "#/");
 warmVoices();
+whenVoicesReady().then(() => updateSpeakButtons());
 render();
 
-const enableTestHooks = import.meta.env.DEV || import.meta.env.VITE_E2E === "1";
+const enableTestHooks = import.meta.env.DEV || import.meta.env.VITE_E2E === "1" || new URLSearchParams(location.search).has("e2e");
 if (enableTestHooks) {
   window.__WW = {
     getState: () => state,
@@ -404,5 +480,8 @@ if (enableTestHooks) {
       }
     },
     openCards() { show("cards"); },
+    hasCantoneseVoice,
+    whenVoicesReady,
+    playReading: (entry, opts) => playReading(entry, opts),
   };
 }
