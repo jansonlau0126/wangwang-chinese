@@ -1,10 +1,11 @@
-import { characters, dayChars, DAY_TOTAL, findChar } from "./chars.js";
+import { characters, dayChars, DAY_TOTAL, findChar, weekOfDay } from "./chars.js";
 import { dogBySlug, dogs } from "./dogs.js";
 import { dayHintTotal, shouldAwardBall, unlockedDogCount } from "./strokeOrder.js";
 
-export const STORAGE_KEY = "wangwang.zhongwen.v1";
+export const STORAGE_KEY = "wangwang.zhongwen.v2";
 
 const STAGES = ["listen", "watch", "guided", "light", "free", "cheer"];
+const SCREENS = ["home", "map", "cards", "dogs", "about", "practice", "reward"];
 
 export function blankHints() {
   return { guided: 0, light: 0, free: 0 };
@@ -12,7 +13,7 @@ export function blankHints() {
 
 export function defaultState() {
   return {
-    version: 1,
+    version: 2,
     completedDays: [],
     cursorDay: 1,
     active: null,
@@ -24,6 +25,9 @@ export function defaultState() {
     pendingReward: null,
     seenDogs: [dogs[0].slug],
     screen: "home",
+    cardWeek: 1,
+    cardDetail: null,
+    reviewReturn: "home",
   };
 }
 
@@ -38,15 +42,30 @@ function normalize(raw) {
   state.records = state.records || {};
   state.companionDays = state.companionDays || {};
   state.seenDogs = state.seenDogs || [dogs[0].slug];
-  if (!["home", "dogs", "about", "practice", "reward"].includes(state.screen)) state.screen = "home";
+  if (!SCREENS.includes(state.screen)) state.screen = "home";
   if (state.screen === "practice" && !state.active) state.screen = "home";
   if (state.screen === "reward" && !state.pendingReward) state.screen = "home";
+  const maxWeek = Math.ceil(DAY_TOTAL / 5);
+  if (!state.cardWeek || state.cardWeek < 1 || state.cardWeek > maxWeek) {
+    state.cardWeek = weekOfDay(state.cursorDay) || 1;
+  }
+  if (state.cardDetail && !findChar(state.cardDetail)) state.cardDetail = null;
+  if (!["home", "cards"].includes(state.reviewReturn)) state.reviewReturn = "home";
   return state;
 }
 
 export function loadState() {
   try {
     const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    if (!raw) {
+      // migrate v1 if present
+      const legacy = JSON.parse(localStorage.getItem("wangwang.zhongwen.v1") || "null");
+      if (legacy) {
+        const migrated = normalize({ ...legacy, version: 2 });
+        saveState(migrated);
+        return migrated;
+      }
+    }
     return normalize(raw);
   } catch {
     return defaultState();
@@ -67,6 +86,14 @@ export function unlockedCount(state) {
 
 export function isDayDone(state, day = state.cursorDay) {
   return state.completedDays.includes(day);
+}
+
+export function isCharUnlocked(state, entry) {
+  if (!entry) return false;
+  if (state.completedDays.includes(entry.day)) return true;
+  if (entry.day < state.cursorDay) return true;
+  if (entry.day === state.cursorDay) return true;
+  return false;
 }
 
 export function currentEntry(state) {
@@ -107,10 +134,11 @@ export function startPractice(state) {
   return true;
 }
 
-export function beginReview(state, char) {
+export function beginReview(state, char, returnTo = "cards") {
   const entry = findChar(char);
   if (!entry) return;
   if (state.active && !state.active.review) state.savedActive = state.active;
+  state.reviewReturn = returnTo;
   state.active = {
     day: entry.day,
     index: 0,
@@ -120,27 +148,29 @@ export function beginReview(state, char) {
     review: true,
     reviewChar: char,
   };
+  state.cardDetail = null;
   state.screen = "practice";
 }
 
 export function leavePractice(state) {
+  const ret = state.active?.review ? (state.reviewReturn || "home") : "home";
   if (state.active?.review) {
     state.active = state.savedActive || null;
     state.savedActive = null;
   }
-  state.screen = "home";
+  state.screen = ret;
 }
 
+/**
+ * Retry restarts the current stage animation/quiz but does NOT reset the day's
+ * hint counts (those feed the fixed ball-photo rule).
+ */
 export function retryStage(state) {
   if (!state.active) return;
   const stage = state.active.stage;
   if (stage === "cheer") {
     state.active.stage = "guided";
     return;
-  }
-  if (stage === "guided" || stage === "light" || stage === "free") {
-    const entry = currentEntry(state);
-    ensureHints(state, entry.char)[stage] = 0;
   }
   state.active.retry = (state.active.retry || 0) + 1;
 }
@@ -174,9 +204,10 @@ function finishCharacter(state) {
   const entry = currentEntry(state);
   if (entry) rememberRecord(state, entry);
   if (state.active.review) {
+    const ret = state.reviewReturn || "home";
     state.active = state.savedActive || null;
     state.savedActive = null;
-    state.screen = "home";
+    state.screen = ret;
     return;
   }
   const list = dayChars(state.active.day);
@@ -250,4 +281,20 @@ export function recordList(state) {
 
 export function companionName(state) {
   return dogBySlug(state.companion).name;
+}
+
+export function setCardWeek(state, week) {
+  const maxWeek = Math.ceil(DAY_TOTAL / 5);
+  state.cardWeek = Math.max(1, Math.min(maxWeek, week | 0));
+}
+
+export function openCardDetail(state, char) {
+  const entry = findChar(char);
+  if (!entry || !isCharUnlocked(state, entry)) return false;
+  state.cardDetail = char;
+  return true;
+}
+
+export function closeCardDetail(state) {
+  state.cardDetail = null;
 }

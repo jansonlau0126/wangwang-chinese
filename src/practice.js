@@ -131,9 +131,9 @@ function flashMedian(median) {
 
 function coaching(stage, index, total) {
   const place = `第 ${index + 1} 筆，共 ${total} 筆`;
-  if (stage === "guided") return `${place}。跟住圓點同箭嘴。`;
-  if (stage === "light") return `${place}。慢慢自己寫。`;
-  return `${place}。`;
+  if (stage === "guided") return `${place}。跟住腳印同箭嘴！`;
+  if (stage === "light") return `${place}。慢慢自己搵起筆。`;
+  return `${place}。加油！`;
 }
 
 export function destroyPractice() {
@@ -232,7 +232,7 @@ export function mountPractice({ entry, stage, slow, onMiss, onDone }, attempt = 
     onMistake(data) {
       hinting = true;
       const backwards = Boolean(data.isBackwards);
-      setHint(backwards ? "呢一筆方向反咗，由圓點開始。" : "先寫呢一筆。", "warn");
+      setHint(backwards ? "呢一筆方向反咗，由腳印開始。" : "先寫呢一筆啦！", "warn");
       drawGuides(medians, data.strokeNum, true);
       onMiss?.({ stage, backwards, strokeNum: data.strokeNum });
     },
@@ -242,7 +242,7 @@ export function mountPractice({ entry, stage, slow, onMiss, onDone }, attempt = 
       flashMedian(medians[data.strokeNum]);
       strokeIndex = data.strokeNum + 1;
       if (strokeIndex < medians.length) {
-        setHint("呢一筆寫好喇。", "ok");
+        setHint("呢一筆寫好喇！好叻呀！", "ok");
         setStrokeLabel(strokeIndex, medians.length);
         drawGuides(medians, strokeIndex, quiz.guides === "arrow");
         coachTimer = window.setTimeout(() => {
@@ -254,7 +254,7 @@ export function mountPractice({ entry, stage, slow, onMiss, onDone }, attempt = 
       window.clearTimeout(coachTimer);
       hinting = false;
       clearGuides();
-      setHint("寫好喇。", "ok");
+      setHint("寫好喇！好叻呀！", "ok");
       enableNext();
       onDone?.();
     },
@@ -267,14 +267,14 @@ async function runWatch(active, total, onDone) {
     await active.showCharacter();
     if (token !== animToken) return;
     setStrokeLabel(total - 1, total);
-    setHint("筆順睇完喇，可以開始描。", "ok");
+    setHint("筆順睇完喇，可以跟腳印描啦！", "ok");
     enableNext();
     return;
   }
   for (let i = 0; i < total; i += 1) {
     if (token !== animToken) return;
     setStrokeLabel(i, total);
-    setHint(`睇第 ${i + 1} 筆，共 ${total} 筆。`, "");
+    setHint(`睇清楚第 ${i + 1} 筆，共 ${total} 筆。`, "");
     try {
       await active.animateStroke(i);
     } catch {
@@ -282,7 +282,7 @@ async function runWatch(active, total, onDone) {
     }
   }
   if (token !== animToken) return;
-  setHint("筆順睇完喇，可以開始描。", "ok");
+  setHint("筆順睇完喇，可以跟腳印描啦！", "ok");
   enableNext();
   onDone?.();
 }

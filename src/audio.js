@@ -1,8 +1,15 @@
+import manifest from "../data/audio-manifest.json";
+
 let token = 0;
 let current = null;
+const fileSet = new Set(manifest.files || []);
 
 function hex(char) {
   return char.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
+}
+
+export function unicodeName(char) {
+  return `U+${hex(char)}`;
 }
 
 export function stopAudio() {
@@ -18,7 +25,7 @@ function hkVoice() {
   if (typeof speechSynthesis === "undefined") return null;
   const voices = speechSynthesis.getVoices();
   return (
-    voices.find((voice) => /zh-HK|yue-HK|zh-yue/i.test(voice.lang)) ||
+    voices.find((voice) => /^(zh|yue)[-_](hant[-_])?hk|yue/i.test(voice.lang)) ||
     voices.find((voice) => /cantonese|粵語|粤语/i.test(`${voice.name} ${voice.lang}`)) ||
     null
   );
@@ -43,7 +50,7 @@ function playFile(url, myToken) {
   });
 }
 
-function speak(text, myToken) {
+function speak(text, myToken, { slow = false } = {}) {
   return new Promise((resolve) => {
     if (typeof speechSynthesis === "undefined" || myToken !== token) {
       resolve(false);
@@ -57,7 +64,7 @@ function speak(text, myToken) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "zh-HK";
     utterance.voice = voice;
-    utterance.rate = 0.82;
+    utterance.rate = slow ? 0.55 : 0.82;
     utterance.onend = () => resolve(myToken === token);
     utterance.onerror = () => resolve(false);
     speechSynthesis.cancel();
@@ -65,39 +72,60 @@ function speak(text, myToken) {
   });
 }
 
-async function playFirst(urls, text, myToken) {
-  for (const url of urls) {
-    if (myToken !== token) return "stopped";
+function manifestUrl(name) {
+  if (!fileSet.has(name)) return null;
+  return `/assets/audio/${name}`;
+}
+
+export function audioFileForChar(char) {
+  return manifestUrl(`${unicodeName(char)}.mp3`);
+}
+
+export function audioFileForWord(char) {
+  return manifestUrl(`${unicodeName(char)}_word.mp3`);
+}
+
+async function playOne(url, text, myToken, opts) {
+  if (url) {
     const ok = await playFile(url, myToken);
     if (myToken !== token) return "stopped";
     if (ok) return "file";
   }
-  const spoken = await speak(text, myToken);
+  const spoken = await speak(text, myToken, opts);
+  if (myToken !== token) return "stopped";
   return spoken ? "tts" : "none";
 }
 
-export function audioUrlsForChar(char) {
-  const code = hex(char);
-  return [`/assets/audio/${char}.mp3`, `/assets/audio/${code}.mp3`, `/assets/audio/U+${code}.mp3`];
-}
-
-export function audioUrlsForWord(char, word) {
-  const code = hex(char);
-  return [`/assets/audio/${word}.mp3`, `/assets/audio/${char}_word.mp3`, `/assets/audio/${code}_word.mp3`];
-}
-
-/** Plays a file under assets/audio when it exists, otherwise a zh-HK voice. Never falls through to Mandarin. */
-export async function playReading(entry) {
+/**
+ * Plays assets/audio/U+XXXX.mp3 and U+XXXX_word.mp3 when listed in the
+ * audio manifest; otherwise falls back to speechSynthesis (zh-HK / yue).
+ * Call directly from a tap handler so the first utterance unlocks iOS audio.
+ */
+export async function playReading(entry, { slow = false } = {}) {
   const myToken = ++token;
   if (current) {
     current.pause();
     current = null;
   }
   if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
-  const charResult = await playFirst(audioUrlsForChar(entry.char), entry.char, myToken);
-  if (myToken !== token || charResult === "stopped") return { char: charResult, word: "stopped", voice: Boolean(hkVoice()) };
-  const wordResult = await playFirst(audioUrlsForWord(entry.char, entry.exampleWord), entry.exampleWord, myToken);
+  const charResult = await playOne(audioFileForChar(entry.char), entry.char, myToken, { slow });
+  if (myToken !== token || charResult === "stopped") {
+    return { char: charResult, word: "stopped", voice: Boolean(hkVoice()) };
+  }
+  const wordResult = await playOne(audioFileForWord(entry.char), entry.exampleWord, myToken, { slow });
   return { char: charResult, word: wordResult, voice: Boolean(hkVoice()) };
+}
+
+/** Speak only the character (or word). Safe to call from a tap handler. */
+export async function playText(text, { slow = false, kind = "char", char } = {}) {
+  const myToken = ++token;
+  if (current) {
+    current.pause();
+    current = null;
+  }
+  if (typeof speechSynthesis !== "undefined") speechSynthesis.cancel();
+  const url = kind === "word" && char ? audioFileForWord(char) : char ? audioFileForChar(char) : null;
+  return playOne(url, text, myToken, { slow });
 }
 
 export function warmVoices() {

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "naming": {
+    "char": "U+XXXX.mp3",
+    "word": "U+XXXX_word.mp3"
+  },
+  "files": []
+}

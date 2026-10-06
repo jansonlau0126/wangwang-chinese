@@ -7,7 +7,7 @@
 | 項目 | 內容 |
 |------|------|
 | 採用 | **rime-cantonese**（粵語計算語言學基礎建設組 CanCLID 維護）字表 `jyut6ping3.chars.dict.yaml`：https://github.com/rime/rime-cantonese |
-| 授權（已核實 README） | 主體：**CC BY 4.0**；`jyut6ping3.maps`：ODbL 1.0。我哋只用字表（CC BY 4.0）→ App「關於」頁要署名 rime-cantonese / CanCLID |
+| 授權（已核實 README） | 主體：**CC BY 4.0**；`jyut6ping3.maps`：ODbL 1.0。我哋只用字表（CC BY 4.0）→ 第一季粵拼以教育局為準（內部整理）；rime 只作交叉核對，About 頁唔再署名 rime |
 | 拼音方案 | 香港語言學學會粵拼（LSHK Jyutping），同教育局《香港小學學習字詞表》預設顯示嘅粵拼一致（字詞表查詢參數 `jpC=lshk`） |
 | 格式 | 每行「字 ⇥ 粵拼 ⇥ 使用比例」，例如 `行 haang4 5%`；多音字有多行，比例低者（如 `0%`、`3%`）屬少用讀音 |
 | 核對標準 | 每個入選字的讀音再對照教育局字詞表網上版（https://www.edbchinese.hk/lexlist_ch/ ）所列粵音及詞語粵拼；兩者不同時以教育局為準 |
@@ -43,7 +43,7 @@
 - 聲音：Azure zh-HK 預設神經語音（例如 HiuMaanNeural／WanLungNeural／HiuGaaiNeural，**現時可用名單待確認**，見 [語言支援](https://learn.microsoft.com/azure/ai-services/speech-service/language-support)）。
 - 單字容易讀錯聲調 → 生成時用例詞或 SSML 控制；zh-HK 是否支援以粵拼指定讀音（`<phoneme>`）：**待確認**，否則人手聽，錯就改用例詞內截取或錄音。
 - 每個檔案人手驗收（同筆順一樣記錄驗收人、日期）。
-- 檔名：`audio/{Unicode}.mp3`、`audio/{Unicode}_word.mp3`。
+- 檔名：`assets/audio/U+XXXX.mp3`、`assets/audio/U+XXXX_word.mp3`；清單 `data/audio-manifest.json`。生成腳本：`npm run audio`（Azure zh-HK-HiuGaaiNeural）。人形錄音可之後用同檔名覆蓋。
 - 合成語音再分發的條款：**待確認，阻擋音檔製作**——生成任何音檔前，必須先核對 Azure 服務條款中把合成語音放入 App 再分發（離線打包／CDN 派發）的條款。
 
 ### 成本

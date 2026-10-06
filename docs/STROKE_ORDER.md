@@ -49,7 +49,7 @@ hanzi-writer 程式本身是 MIT 授權（[README](https://github.com/chanind/ha
 - 雨、雲、風的「方向疑似」多數是短點畫的誤報，仍要人眼確認。
 - 局限：配對只用中心點，**不能偵測**筆畫數相同但字形細節不同（例如部件寫法）；也可能誤報。所以結果只是「篩選」，最終要人手看。
 
-**估計：** 第一期 30 個簡單字，自動比對約 **1–2 字**要修（實際：第一期 30 字中只有「出」需重排，見 [CHARACTERS_PHASE1.md](./CHARACTERS_PHASE1.md)）；擴展到 8 畫以上、含艹／馬／魚等部件的字，**約 3–4 成**要修。
+**估計：** 第一季簡單字，自動比對約 **1–2 字**要修（實際：第一期 30 字中只有「出」需重排，見 [CHARACTERS_PHASE1.md](./CHARACTERS_PHASE1.md)（第一季 180 字））；擴展到 8 畫以上、含艹／馬／魚等部件的字，**約 3–4 成**要修。
 
 ## 4. 建議流程（pipeline）
 
@@ -70,9 +70,9 @@ hanzi-writer 程式本身是 MIT 授權（[README](https://github.com/chanind/ha
 
 | 階段 | 設定 | 說明 |
 |------|------|------|
-| 有提示描紅 | `showOutline: true`、`leniency: 1.3`（較寬鬆）、`showHintAfterMisses: 1` | 底字淡色；錯一次就閃出該筆提示 |
-| 少提示描紅 | `showOutline: true`（更淡）、`leniency: 1.0`、`showHintAfterMisses: 2` | |
-| 自己寫 | `showOutline: false`、`leniency: 1.0`、`showHintAfterMisses: 3`、`markStrokeCorrectAfterMisses: 3` | 錯 3 次自動幫手補上，避免卡死 |
+| 跟腳印描（guided） | `showOutline: true`、`leniency: 1.3`（較寬鬆）、`showHintAfterMisses: 1` | 底字淡色；錯一次就閃出該筆提示 |
+| 少啲腳印（light） | `showOutline: true`（更淡）、`leniency: 1.0`、`showHintAfterMisses: 2` | |
+| 我自己寫（free） | `showOutline: false`、`leniency: 1.0`、`showHintAfterMisses: 3`、`markStrokeCorrectAfterMisses: 3` | 錯 3 次自動幫手補上，避免卡死 |
 | 全程 | `acceptBackwardsStrokes: false` | 方向是筆順教學一部分，反方向當錯（只溫和提示） |
 
 - **次序錯**：寫了第 3 筆的位置但應寫第 2 筆 → 不畫上去，柔和提示「先寫呢一筆」並閃出正確筆畫起點。

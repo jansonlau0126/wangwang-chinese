@@ -1,7 +1,67 @@
 {
   "出": {
-    "order": [3, 1, 2, 4, 5],
+    "order": [
+      3,
+      1,
+      2,
+      4,
+      5
+    ],
     "reverse": [],
     "note": "Hong Kong EDB order differs from hanzi-writer-data (mainland). order is 1-based indices of the original strokes in the order to teach: long centre vertical, upper-left fold, upper-right vertical, lower-left fold, lower-right vertical. Checked 2026-10-06 against the EDB animation (stkdemo 0321)."
+  },
+  "母": {
+    "order": [
+      1,
+      2,
+      3,
+      5,
+      4
+    ],
+    "reverse": [],
+    "note": "Hong Kong EDB order: strokes 4 and 5 of hanzi-writer-data swapped (ORDER 12354). Checked 2026-10-06 against compare_result."
+  },
+  "的": {
+    "order": [
+      1,
+      2,
+      4,
+      3,
+      5,
+      6,
+      7,
+      8
+    ],
+    "reverse": [],
+    "note": "Hong Kong EDB order differs (ORDER 12435678). Reordered from hanzi-writer-data. Checked 2026-10-06 against compare_result."
+  },
+  "來": {
+    "order": [
+      1,
+      6,
+      2,
+      3,
+      4,
+      5,
+      7,
+      8
+    ],
+    "reverse": [],
+    "note": "Hong Kong EDB order differs (ORDER 16234578). Reordered from hanzi-writer-data. Checked 2026-10-06 against compare_result."
+  },
+  "飛": {
+    "order": [
+      1,
+      3,
+      2,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "reverse": [],
+    "note": "Hong Kong EDB order differs (ORDER 132456789). Reordered from hanzi-writer-data. Checked 2026-10-06 against compare_result."
   }
 }

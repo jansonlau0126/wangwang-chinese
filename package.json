@@ -1,6 +1,6 @@
 {
   "name": "wangwang-zhongwen",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "汪汪中文 — 香港小學筆順描紅",
   "type": "module",
@@ -9,7 +9,9 @@
     "build": "node scripts/check.mjs && vite build",
     "preview": "vite preview",
     "strokes": "node scripts/build-strokes.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "audio": "node scripts/gen-audio-azure.mjs",
+    "audio:dry": "node scripts/gen-audio-azure.mjs --dry-run"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   },
   "devDependencies": {
     "hanzi-writer-data": "^2.0.1",
+    "playwright": "^1.48.0",
     "vite": "^6.4.4"
   }
 }

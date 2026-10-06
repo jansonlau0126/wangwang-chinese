@@ -43,3 +43,11 @@
 | 水 | 約 0.035 |
 
 最佳配對上的點積都不是負數。若日後對實物抄寫確認要反轉，在 `data/stroke-overrides.json` 的 `reverse` 寫上重排後的 1-based 筆號，再跑 `npm run strokes`。
+
+
+## Season 1（2026-10-06）
+
+- 字數：180／60 日。
+- 重排 overrides：出、母、的、來、飛（見 `data/stroke-overrides.json`）。
+- 避開無法可靠修正的字：又、花、草、雨、風、雲、馬、魚、學、貓。
+- `verifiedAgainstEdb`：約半數已對照教育局／compare_result；其餘標 `false`，日後補對照。

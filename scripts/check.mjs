@@ -11,11 +11,18 @@ function assert(cond, message) {
   if (!cond) throw new Error(message);
 }
 
-assert(characters.length === 30, "phase 1 should have 30 characters");
+assert(characters.length === 180, `Season 1 should have 180 characters, got ${characters.length}`);
 const days = new Set(characters.map((c) => c.day));
-assert(days.size === 10, "phase 1 should cover 10 days");
-for (let day = 1; day <= 10; day += 1) {
+assert(days.size === 60, `Season 1 should cover 60 days, got ${days.size}`);
+for (let day = 1; day <= 60; day += 1) {
   assert(characters.filter((c) => c.day === day).length === 3, `day ${day} should have 3 characters`);
+}
+
+const seen = new Set();
+for (const entry of characters) {
+  assert(!seen.has(entry.char), `duplicate character ${entry.char}`);
+  seen.add(entry.char);
+  assert(entry.jyutping && entry.exampleWord && entry.exampleJyutping, `${entry.char} missing reading fields`);
 }
 
 const rawDir = path.join(root, "node_modules/hanzi-writer-data");
@@ -43,14 +50,21 @@ assert(chu.strokes[1] === chuRaw.strokes[0], "出 stroke 2 should be original st
 assert(chu.strokes[2] === chuRaw.strokes[1], "出 stroke 3 should be original stroke 2");
 assert(chu.modified && chu.modified.includes("3,1,2,4,5"), "出 should record the reorder");
 
+for (const ch of ["母", "的", "來", "飛"]) {
+  assert(overrides[ch]?.order?.length, `${ch} should have an override`);
+}
+
 assert(unlockedDogCount(0) === 1, "start with 毛毛");
-assert(unlockedDogCount(1) === 1, "one day still one dog");
-assert(unlockedDogCount(2) === 2, "two days unlock the second dog");
-assert(unlockedDogCount(28) === 15, "28 days unlocks all 15");
-assert(unlockedDogCount(40) === 15, "unlocks cap at 15");
+assert(unlockedDogCount(3) === 1, "three days still one dog");
+assert(unlockedDogCount(4) === 2, "four days unlock the second dog");
+assert(unlockedDogCount(56) === 15, "56 days unlocks all 15");
+assert(unlockedDogCount(60) === 15, "unlocks cap at 15");
 assert(shouldAwardBall({ zeroHints: true, daysWithCompanion: 1, alreadyHas: false }) === true, "zero hints awards the ball");
 assert(shouldAwardBall({ zeroHints: false, daysWithCompanion: 3, alreadyHas: false }) === true, "third day with the same dog awards the ball");
 assert(shouldAwardBall({ zeroHints: true, daysWithCompanion: 1, alreadyHas: true }) === false, "ball is collected once");
 assert(shouldAwardBall({ zeroHints: false, daysWithCompanion: 1, alreadyHas: false }) === false, "no bonus without a trigger");
 
-console.log("check ok: 30 characters, stroke counts, 出 order, dog unlock, ball rule");
+const manifest = JSON.parse(readFileSync(path.join(root, "data/audio-manifest.json"), "utf8"));
+assert(Array.isArray(manifest.files), "audio manifest must list files");
+
+console.log("check ok: 180 characters / 60 days, stroke files, overrides, dog unlock /4, ball rule");

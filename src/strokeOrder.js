@@ -2,7 +2,7 @@
  * Reorder hanzi-writer stroke JSON to Hong Kong EDB order.
  * `order` is 1-based indices of the original strokes. `reverse` is 1-based
  * indices after that reorder whose median point lists should run the other way.
- * Reversing medians does not reverse the outline path; phase 1 does not use it.
+ * Reversing medians does not reverse the outline path; Season 1 does not use it.
  */
 export function applyStrokeOverride(raw, override) {
   const n = raw.strokes.length;
@@ -38,10 +38,10 @@ export function applyStrokeOverride(raw, override) {
   return { strokes, medians, radStrokes };
 }
 
-/** Starter dog plus one new dog every two completed days, capped at the pack size. */
+/** Starter dog plus one new dog every four completed days, capped at the pack size. All 15 by day 56. */
 export function unlockedDogCount(completedDays, totalDogs = 15) {
   const days = Math.max(0, completedDays | 0);
-  return Math.min(totalDogs, 1 + Math.floor(days / 2));
+  return Math.min(totalDogs, 1 + Math.floor(days / 4));
 }
 
 export function hintTotal(stages) {
@@ -54,8 +54,9 @@ export function dayHintTotal(hintMap) {
 }
 
 /**
- * Hidden ball photo: first time a companion finishes a zero-hint day,
- * or every 3rd completed day with that same dog. Already collected means no repeat.
+ * Hidden ball photo uses a fixed rule (not random):
+ * first time a companion finishes a zero-hint day, or every 3rd completed day
+ * with that same dog. Already collected means no repeat.
  */
 export function shouldAwardBall({ zeroHints, daysWithCompanion, alreadyHas }) {
   if (alreadyHas) return false;
