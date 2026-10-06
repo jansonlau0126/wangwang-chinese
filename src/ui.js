@@ -138,50 +138,170 @@ export function renderHome(state) {
 export function renderMap(state) {
   const completed = new Set(state.completedDays);
   const unlockedDogs = unlockedDogCount(state.completedDays.length, dogs.length);
-  const zones = [];
+  const companion = dogBySlug(state.companion);
+  const cols = 3;
+  const rows = Math.ceil(DAY_TOTAL / cols);
+  const W = 360;
+  const rowH = 118;
+  const topPad = 36;
+  const bottomPad = 48;
+  const height = topPad + rows * rowH + bottomPad;
+
+  function stonePos(day) {
+    const index = day - 1;
+    const row = Math.floor(index / cols);
+    const colInRow = index % cols;
+    const ltr = row % 2 === 0;
+    const col = ltr ? colInRow : cols - 1 - colInRow;
+    const x = 60 + col * 120;
+    const y = topPad + row * rowH + 44;
+    return { x, y, row, ltr, col };
+  }
+
+  // Path through stone centres, with soft curves between rows
+  const pts = [];
+  for (let day = 1; day <= DAY_TOTAL; day += 1) {
+    const { x, y } = stonePos(day);
+    pts.push([x, y]);
+  }
+  let d = `M ${pts[0][0]} ${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i += 1) {
+    const [x0, y0] = pts[i - 1];
+    const [x1, y1] = pts[i];
+    if (Math.abs(y1 - y0) > 10) {
+      // vertical snake turn between rows
+      const midY = (y0 + y1) / 2;
+      d += ` C ${x0} ${midY}, ${x1} ${midY}, ${x1} ${y1}`;
+    } else {
+      d += ` L ${x1} ${y1}`;
+    }
+  }
+
+  function decor(x, y, kind, i) {
+    if (kind === "tree") {
+      return `<g transform="translate(${x} ${y})" opacity="0.9">
+        <rect x="-3" y="10" width="6" height="12" rx="1" fill="#8B5A2B"/>
+        <circle cx="0" cy="4" r="12" fill="#4FAD55"/>
+        <circle cx="-7" cy="8" r="8" fill="#6FCB6A"/>
+        <circle cx="7" cy="8" r="8" fill="#6FCB6A"/>
+      </g>`;
+    }
+    if (kind === "bush") {
+      return `<g transform="translate(${x} ${y})" opacity="0.85">
+        <ellipse cx="0" cy="6" rx="14" ry="9" fill="#5FBE62"/>
+        <ellipse cx="-8" cy="8" rx="9" ry="7" fill="#7AD47A"/>
+        <ellipse cx="8" cy="9" rx="8" ry="6" fill="#6FCB6A"/>
+      </g>`;
+    }
+    if (kind === "flower") {
+      const colors = ["#F5D76E", "#F0A04B", "#FF8FB8", "#7EC8FF"];
+      const c = colors[i % colors.length];
+      return `<g transform="translate(${x} ${y})">
+        <circle cx="0" cy="0" r="3.2" fill="${c}"/>
+        <circle cx="5" cy="0" r="3.2" fill="${c}"/>
+        <circle cx="-5" cy="0" r="3.2" fill="${c}"/>
+        <circle cx="0" cy="5" r="3.2" fill="${c}"/>
+        <circle cx="0" cy="-5" r="3.2" fill="${c}"/>
+        <circle cx="0" cy="0" r="2.2" fill="#fff6c8"/>
+      </g>`;
+    }
+    // bone
+    return `<g transform="translate(${x} ${y}) rotate(${(i * 37) % 40 - 20})" opacity="0.85">
+      <rect x="-7" y="-2" width="14" height="4" rx="2" fill="#FBF6E9"/>
+      <circle cx="-7" cy="-3" r="3" fill="#FBF6E9"/><circle cx="-7" cy="3" r="3" fill="#FBF6E9"/>
+      <circle cx="7" cy="-3" r="3" fill="#FBF6E9"/><circle cx="7" cy="3" r="3" fill="#FBF6E9"/>
+    </g>`;
+  }
+
+  const decorations = [];
+  for (let row = 0; row < rows; row += 1) {
+    const y = topPad + row * rowH + 44;
+    const side = row % 2 === 0 ? 18 : W - 18;
+    decorations.push(decor(side, y - 28, row % 3 === 0 ? "tree" : "bush", row));
+    if (row % 2 === 1) decorations.push(decor(W / 2, y + 40, "flower", row));
+    if (row % 4 === 2) decorations.push(decor(side === 18 ? W - 28 : 28, y + 18, "bone", row));
+  }
+
+  // Week signposts at first day of each week
+  const signs = [];
   for (let week = 1; week <= WEEK_TOTAL; week += 1) {
-    const start = (week - 1) * 5 + 1;
-    const reverse = week % 2 === 0;
-    const parts = [];
-    for (let day = start; day <= start + 4; day += 1) {
-      if (day > start) parts.push('<span class="path-connector" aria-hidden="true"></span>');
-      const done = completed.has(day);
-      const current = day === state.cursorDay;
-      const locked = day > state.cursorDay && !done;
-      const cls = done ? "done" : current ? "now" : locked ? "locked" : "todo";
-      parts.push(`<button type="button" class="path-day ${cls}" data-act="goto-day" data-day="${day}" ${locked ? "disabled" : ""}>
-        <span class="n">第 ${day} 日</span>
-        <span class="kai">${dayChars(day).map((e) => e.char).join("")}</span>
-      </button>`);
-      // Unlock spot after every 4th day (dogs 2..15)
-      if (day % 4 === 0) {
-        const dogIndex = day / 4; // 1..15 → dogs[1] after day 4
-        if (dogIndex < dogs.length) {
-          parts.push('<span class="path-connector" aria-hidden="true"></span>');
-          const dog = dogs[dogIndex];
-          const open = dogIndex < unlockedDogs;
-          if (open) {
-            parts.push(`<button type="button" class="unlock-spot" data-act="tab" data-tab="dogs" title="${esc(dog.name)}">
-              <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
-            </button>`);
-          } else {
-            parts.push(`<button type="button" class="unlock-spot locked" data-act="locked-dog" title="未解鎖">
-              ${iconSilhouette()}
-            </button>`);
-          }
+    const day = (week - 1) * 5 + 1;
+    const { x, y, ltr } = stonePos(day);
+    const sx = ltr ? Math.max(10, x - 52) : Math.min(W - 10, x + 52);
+    signs.push(`<g class="week-sign" transform="translate(${sx} ${y - 38})">
+      <rect x="-22" y="16" width="6" height="28" rx="2" fill="#8B5A2B"/>
+      <rect x="-40" y="0" width="42" height="22" rx="4" fill="#C4A574" stroke="#8B5A2B" stroke-width="2"/>
+      <text x="-19" y="15" text-anchor="middle" font-size="11" font-weight="700" fill="#3B2A14">第${week}週</text>
+    </g>`);
+  }
+
+  const stones = [];
+  for (let day = 1; day <= DAY_TOTAL; day += 1) {
+    const { x, y } = stonePos(day);
+    const done = completed.has(day);
+    const current = day === state.cursorDay;
+    const locked = day > state.cursorDay && !done;
+    const cls = done ? "done" : current ? "now" : locked ? "locked" : "todo";
+    const chars = dayChars(day).map((e) => e.char).join("");
+    const marker = current
+      ? `<span class="you-are-here"><img src="${esc(poseSrc(companion, "sit"))}" alt="${esc(companion.name)}"></span>`
+      : "";
+    const paw = done ? '<span class="stone-paw" aria-hidden="true"></span>' : "";
+    stones.push(`<button type="button" class="stone ${cls}" style="left:${x}px;top:${y}px" data-act="goto-day" data-day="${day}" data-stone="${day}" ${locked ? "disabled" : ""}>
+      ${paw}
+      <span class="stone-n">${day}</span>
+      <span class="stone-chars kai">${esc(chars)}</span>
+      ${marker}
+    </button>`);
+
+    if (day % 4 === 0) {
+      const dogIndex = day / 4;
+      if (dogIndex < dogs.length) {
+        const dog = dogs[dogIndex];
+        const open = dogIndex < unlockedDogs;
+        const pos = stonePos(day);
+        // Place clearing outward from path
+        const clearX = pos.ltr && pos.col === 2 ? x - 70 : pos.ltr ? x + 70 : (pos.col === 0 ? x + 70 : x - 70);
+        // Prefer side with space
+        let cx = pos.col === 1 ? (pos.ltr ? x + 78 : x - 78) : (pos.col === 0 ? x - 58 : x + 58);
+        cx = Math.max(42, Math.min(W - 42, cx));
+        const cy = y + 56;
+        const need = Math.max(0, dogIndex * 4 - state.completedDays.length);
+        if (open) {
+          stones.push(`<button type="button" class="clearing open" style="left:${cx}px;top:${cy}px" data-act="tab" data-tab="dogs" title="${esc(dog.name)}">
+            <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
+            <span class="clear-name">${esc(dog.name)}</span>
+          </button>`);
+        } else {
+          stones.push(`<button type="button" class="clearing locked" style="left:${cx}px;top:${cy}px" data-act="locked-dog" title="未解鎖">
+            ${iconSilhouette()}
+            <span class="clear-name">再行 ${need || "多幾"} 日</span>
+          </button>`);
         }
       }
     }
-    const doneInWeek = [0,1,2,3,4].filter((i) => completed.has(start + i)).length;
-    zones.push(`<section class="zone">
-      <div class="zone-head"><h2>第 ${week} 週 · 公園小路</h2><span class="zone-tag">${doneInWeek}/5 日</span></div>
-      <div class="path${reverse ? " reverse" : ""}">${parts.join("")}</div>
-    </section>`);
   }
-  return `<div class="page" data-screen="map">
+
+  return `<div class="page map-page" data-screen="map">
     <header class="top"><div class="brand">進度地圖</div></header>
-    <p class="lead">沿著狗狗公園嘅小路行！每寫完 4 日就會遇到新朋友。而家完成咗 ${state.completedDays.length} 日。</p>
-    <div class="park-map">${zones.join("")}</div>
+    <p class="lead">沿著狗狗公園小路行！每寫完 4 日就會遇到新朋友。而家完成咗 ${state.completedDays.length} 日。</p>
+    <div class="trail-scene" id="trail-scene">
+      <svg class="trail-svg" viewBox="0 0 ${W} ${height}" width="100%" aria-hidden="true">
+        <defs>
+          <linearGradient id="dirt" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#D2B48C"/>
+            <stop offset="100%" stop-color="#C4A574"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="${W}" height="${height}" fill="#E8F6E0" rx="24"/>
+        ${decorations.join("")}
+        <path d="${d}" fill="none" stroke="#E8D4A8" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${d}" fill="none" stroke="url(#dirt)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="${d}" fill="none" stroke="#F5E6C8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 10" opacity="0.7"/>
+        ${signs.join("")}
+      </svg>
+      <div class="trail-stones" style="height:${height}px">${stones.join("")}</div>
+    </div>
   </div>`;
 }
 

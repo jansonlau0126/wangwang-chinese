@@ -88,6 +88,12 @@ function render() {
     markDogsSeen(state);
     if ((state.seenDogs || []).join(",") !== before) saveState(state);
   }
+  if (state.screen === "map") {
+    requestAnimationFrame(() => {
+      const el = document.querySelector(`[data-stone="${state.cursorDay}"]`);
+      if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+  }
   const entry = currentEntry(state);
   if (state.screen === "practice" && state.active && entry) {
     const stage = state.active.stage;
