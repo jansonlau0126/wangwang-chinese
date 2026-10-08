@@ -21,6 +21,18 @@
 
 **不做**：親子卡、家庭邀請卡、家長報告卡。
 
+## 視覺樣板（2026-10-08）
+
+已收錄於 [`images/share-card-templates/`](./images/share-card-templates/)：
+
+| 樣板 | 對應類型 |
+|------|----------|
+| `01-daily-complete.jpg` | 每日完成卡 |
+| `02-chapter-diary.jpg` | 章節卡／探險日記 |
+| `03-season-complete.jpg` | 完季卡 |
+
+每週卡、大階段卡、連寫卡暫未有獨立視覺稿；出圖時沿用每日卡／章節卡層次，只改標題同變數。詳見該資料夾 `README.md`。
+
 ---
 
 ## 2. 變數說明
