@@ -1,7 +1,7 @@
 # 汪汪中文 · 第二季「汪汪探險隊」規劃（已對齊 Season 1）
 
-> 最後更新：2026-10-06  
-> 狀態：**主題保留**；已對齊 S1。D1–D3、D5–D9 已決定（建議 A）；D4 家庭模式不做；讀音免錄音方案研究中。  
+> 最後更新：2026-10-08  
+> 狀態：**主題保留**；已對齊 S1。D1–D13 已決定；EDB 全核完成（字表 v4）；讀音＝裝置 TTS。  
 > 衝突原文對照：`CONFLICTS.md`
 
 ---
@@ -23,6 +23,9 @@
 | [08-dog-outfits.md](08-dog-outfits.md) | 換裝／表情延伸（待決定） |
 | [09-sound-and-final.md](09-sound-and-final.md) | 聲音同完季動畫 |
 | [images/momo-expressions/](images/momo-expressions/) | 毛毛表情草稿（資料夾名歷史遺留） |
+| [CHARACTERS_PHASE2_DRAFT.md](CHARACTERS_PHASE2_DRAFT.md) | S2 180 字草稿 **v4**（EDB 全核後） |
+| [CHARACTERS_PHASE2_EDB_PRECHECK.md](CHARACTERS_PHASE2_EDB_PRECHECK.md) | EDB 預核（已被全核取代） |
+| [CHARACTERS_PHASE2_EDB_VERIFICATION.md](CHARACTERS_PHASE2_EDB_VERIFICATION.md) | EDB 筆順全核報告（2026-10-08） |
 
 ---
 
@@ -82,17 +85,19 @@
 4. 程度：P2–P3，筆畫同詞彙難度整體高過 S1 尾段。  
 5. 每日 3 字盡量主題接近；例詞 2 字、粵拼齊。
 
-### 4.3 快取抽查（唔係定稿）
+### 4.3 EDB 全核（2026-10-08）✅
 
-喺現有 EDB 快取對「S2 有、S1 無」嘅字抽查：
+草稿 v3 180 字已用同 S1 流程全數比對 EDB 筆順動畫：
 
-- 暫 OK：買、店、後、風、雨、雲、冷、媽、桌、回  
-- ORDER（或可覆寫）：燈、貓、魚、熱、夢  
-- COUNT 宜換：花、草、溫、菜、床、睡  
-- NO_STK：高、遠、近、開、關、錢、黃、飯、鞋、醒  
-- 其餘大量：**未拉 EDB**，一律待核對  
+| 結果 | 數 |
+|------|----|
+| OK | 98 → 替換後定稿 **116** |
+| ORDER（需 strokeOrderOverride） | 62 → 定稿 **64**（含新換入 酒、仍） |
+| COUNT／DIR（已換字） | 20 |
+| Unverifiable | 0 |
 
-完整策表同核對＝**待決定 D6**＋待做「字表」。
+詳見 [`CHARACTERS_PHASE2_EDB_VERIFICATION.md`](CHARACTERS_PHASE2_EDB_VERIFICATION.md)；定稿表 [`CHARACTERS_PHASE2_DRAFT.md`](CHARACTERS_PHASE2_DRAFT.md) **v4**。  
+**尚未**寫入 `data/characters.json`（程式暫緩）。
 
 ---
 
@@ -113,7 +118,7 @@
 ## 6. 下一步
 
 1. 讀 `DECISIONS_AND_TODO.md`（多數已拍板）  
-2. 策 S2 180 新字 + EDB 核對  
+2. ~~策 S2 180 新字 + EDB 核對~~ ✅ → 批准後写入 `data/characters.json`（含 64 override）  
 3. 章節故事填字、狀態機、模板分享卡  
 
 呢個資料夾係規劃；實作前仍要以 `characters.json`／上線 App 為準。

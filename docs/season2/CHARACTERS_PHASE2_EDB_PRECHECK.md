@@ -1,3 +1,5 @@
+> ⚠️ **已被 `CHARACTERS_PHASE2_EDB_VERIFICATION.md`（2026-10-08 全核）取代；本檔僅保留預核歷史。**
+
 # Season 2 生字 EDB 預核對報告
 
 > 日期：2026-10-07  
