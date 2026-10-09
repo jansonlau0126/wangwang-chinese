@@ -29,7 +29,7 @@
 - 筆順：[`docs/STROKE_ORDER.md`](./docs/STROKE_ORDER.md)
 - 粵語讀音（裝置 TTS + 粵拼）：[`docs/CANTONESE.md`](./docs/CANTONESE.md)
 - 第二季規劃（汪汪探險隊）：[`docs/season2/`](./docs/season2/README.md)
-- 素材：`assets/`（狗狗相片為 **AI 生成草稿**）
+- 素材：`assets/`（狗狗相（寫實風））
 
 ## 狀態
 

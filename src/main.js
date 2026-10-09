@@ -8,7 +8,7 @@ import {
   whenVoicesReady,
 } from "./audio.js";
 import { playRewardSfx, playSfx, setSfxEnabled } from "./sfx.js";
-import { downloadShareCard, sharePayloadFromReward } from "./shareCard.js";
+import { downloadShareCard, sharePayloadFromReward, renderShareCardCanvas } from "./shareCard.js";
 import { destroyPractice, mountPractice } from "./practice.js";
 import "./styles.css";
 import {
@@ -575,5 +575,7 @@ if (enableTestHooks) {
     playReading: (entry, opts) => playReading(entry, opts),
     playSfx: (name) => playSfx(name),
     setSfxEnabled: (on) => setSfxEnabled(on),
+    sharePayloadFromReward: (reward) => sharePayloadFromReward(reward, state),
+    renderShareCardCanvas,
   };
 }

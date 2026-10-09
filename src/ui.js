@@ -629,10 +629,13 @@ export function renderReward(state) {
       ${photo}
       ${newbie ? `<p class="new-dog">識咗新朋友：<b>${esc(newbie.name)}</b>！</p>` : ""}
       ${ball ? `<p class="ball-unlock">隱藏波波相解鎖：${esc(ball.name)}</p>` : ""}
+      <div class="share-cta">
+        <button type="button" class="btn share-btn" data-act="share-card">分享卡 · 儲相</button>
+        <p class="share-hint muted">可下載分享卡</p>
+      </div>
       <div class="actions">
         ${more ? '<button type="button" class="btn" data-act="advance-start">下一日</button>' : ""}
-        <button type="button" class="btn ghost" data-act="share-card">分享卡</button>
-        <button type="button" class="btn" data-act="home">返首頁</button>
+        <button type="button" class="btn ghost" data-act="home">返首頁</button>
       </div>
     </section>
   </div>`;
@@ -849,7 +852,6 @@ export function renderAbout(state) {
         <li>字卡同例詞用「自由香港楷書」（自由香港字型，CC BY 4.0）。</li>
         <li>粵拼用香港語言學學會方案，以教育局字詞表讀音為準（內部整理）。</li>
         <li>描紅用 <a href="/licenses.txt">hanzi-writer（MIT）</a> 同 hanzi-writer-data（文鼎公眾授權條款）。</li>
-        <li>狗狗相係 AI 草稿，之後會換真實相片。</li>
       </ul>
       <p><a href="/licenses.txt">完整授權條款</a></p>
     </section>

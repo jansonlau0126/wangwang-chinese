@@ -1247,6 +1247,26 @@ body[data-mode="focus"] #tabs { display: none; }
   animation: confettiFade 1.6s ease-out forwards;
 }
 .reward-card { position: relative; overflow: hidden; }
+
+.share-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+.share-btn {
+  flex: 1 1 auto;
+  width: 100%;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+}
+.share-hint {
+  text-align: center;
+  font-size: 13px;
+  margin: 0;
+}
+
 @keyframes confettiFade {
   0% { opacity: 0; }
   30% { opacity: 1; }
