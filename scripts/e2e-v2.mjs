@@ -42,7 +42,7 @@ page.on("console", (msg) => {
   if (msg.type() === "error") console.log("console error", msg.text());
 });
 
-await page.goto(base + "/#/", { waitUntil: "networkidle" });
+await page.goto(base + "/?e2e=1#/", { waitUntil: "networkidle" });
 await page.waitForFunction(() => window.__WW);
 await page.evaluate(() => {
   localStorage.clear();
@@ -135,7 +135,7 @@ const tablet = await browser.newContext({
   locale: "zh-HK",
 });
 const tpage = await tablet.newPage();
-await tpage.goto(base + "/#/", { waitUntil: "networkidle" });
+await tpage.goto(base + "/?e2e=1#/", { waitUntil: "networkidle" });
 await tpage.waitForFunction(() => window.__WW);
 await tpage.evaluate(() => { localStorage.clear(); location.reload(); });
 await tpage.waitForFunction(() => window.__WW);
@@ -159,7 +159,7 @@ const eco = await browser.newContext({
   locale: "zh-HK",
 });
 const ep = await eco.newPage();
-await ep.goto(base + "/#/", { waitUntil: "networkidle" });
+await ep.goto(base + "/?e2e=1#/", { waitUntil: "networkidle" });
 await ep.waitForFunction(() => window.__WW);
 await ep.evaluate(() => { localStorage.clear(); location.reload(); });
 await ep.waitForFunction(() => window.__WW);
