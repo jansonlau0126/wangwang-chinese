@@ -18,10 +18,14 @@ PYFTSUBSET = Path("/tmp/fontvenv/bin/pyftsubset")
 
 def collect_needed() -> set[str]:
     needed: set[str] = set()
-    chars = json.loads((ROOT / "data/characters.json").read_text(encoding="utf-8"))
-    for entry in chars:
-        needed.update(entry["char"])
-        needed.update(entry["exampleWord"])
+    for name in ("characters.json", "characters-s2.json"):
+        path = ROOT / "data" / name
+        if not path.exists():
+            continue
+        chars = json.loads(path.read_text(encoding="utf-8"))
+        for entry in chars:
+            needed.update(entry["char"])
+            needed.update(entry["exampleWord"])
     for path in list((ROOT / "src").glob("*.js")) + [
         ROOT / "index.html",
         ROOT / "public/404.html",

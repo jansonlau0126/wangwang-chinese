@@ -13,7 +13,9 @@
     "happy",
     "act-a",
     "act-b",
-    "ball"
+    "ball",
+    "expedition-a",
+    "expedition-b"
   ],
   "hero": {
     "path": "assets/hero/hero-maomao-notebook.webp",
@@ -39,7 +41,9 @@
         "happy": "assets/poses/01-maomao-toy-poodle-happy.webp",
         "act-a": "assets/poses/01-maomao-toy-poodle-act-a.webp",
         "act-b": "assets/poses/01-maomao-toy-poodle-act-b.webp",
-        "ball": "assets/poses/01-maomao-toy-poodle-ball.webp"
+        "ball": "assets/poses/01-maomao-toy-poodle-ball.webp",
+        "expedition-a": "assets/expedition/01-maomao-toy-poodle-expedition-a.webp",
+        "expedition-b": "assets/expedition/01-maomao-toy-poodle-expedition-b.webp"
       }
     },
     {
@@ -59,7 +63,9 @@
         "happy": "assets/poses/02-bobo-shiba-happy.webp",
         "act-a": "assets/poses/02-bobo-shiba-act-a.webp",
         "act-b": "assets/poses/02-bobo-shiba-act-b.webp",
-        "ball": "assets/poses/02-bobo-shiba-ball.webp"
+        "ball": "assets/poses/02-bobo-shiba-ball.webp",
+        "expedition-a": "assets/expedition/02-bobo-shiba-expedition-a.webp",
+        "expedition-b": "assets/expedition/02-bobo-shiba-expedition-b.webp"
       }
     },
     {
@@ -79,7 +85,9 @@
         "happy": "assets/poses/03-duoduo-corgi-happy.webp",
         "act-a": "assets/poses/03-duoduo-corgi-act-a.webp",
         "act-b": "assets/poses/03-duoduo-corgi-act-b.webp",
-        "ball": "assets/poses/03-duoduo-corgi-ball.webp"
+        "ball": "assets/poses/03-duoduo-corgi-ball.webp",
+        "expedition-a": "assets/expedition/03-duoduo-corgi-expedition-a.webp",
+        "expedition-b": "assets/expedition/03-duoduo-corgi-expedition-b.webp"
       }
     },
     {
@@ -99,7 +107,9 @@
         "happy": "assets/poses/04-doudou-dachshund-happy.webp",
         "act-a": "assets/poses/04-doudou-dachshund-act-a.webp",
         "act-b": "assets/poses/04-doudou-dachshund-act-b.webp",
-        "ball": "assets/poses/04-doudou-dachshund-ball.webp"
+        "ball": "assets/poses/04-doudou-dachshund-ball.webp",
+        "expedition-a": "assets/expedition/04-doudou-dachshund-expedition-a.webp",
+        "expedition-b": "assets/expedition/04-doudou-dachshund-expedition-b.webp"
       }
     },
     {
@@ -119,7 +129,9 @@
         "happy": "assets/poses/05-baibai-bichon-happy.webp",
         "act-a": "assets/poses/05-baibai-bichon-act-a.webp",
         "act-b": "assets/poses/05-baibai-bichon-act-b.webp",
-        "ball": "assets/poses/05-baibai-bichon-ball.webp"
+        "ball": "assets/poses/05-baibai-bichon-ball.webp",
+        "expedition-a": "assets/expedition/05-baibai-bichon-expedition-a.webp",
+        "expedition-b": "assets/expedition/05-baibai-bichon-expedition-b.webp"
       }
     },
     {
@@ -139,7 +151,9 @@
         "happy": "assets/poses/06-jinjin-golden-retriever-happy.webp",
         "act-a": "assets/poses/06-jinjin-golden-retriever-act-a.webp",
         "act-b": "assets/poses/06-jinjin-golden-retriever-act-b.webp",
-        "ball": "assets/poses/06-jinjin-golden-retriever-ball.webp"
+        "ball": "assets/poses/06-jinjin-golden-retriever-ball.webp",
+        "expedition-a": "assets/expedition/06-jinjin-golden-retriever-expedition-a.webp",
+        "expedition-b": "assets/expedition/06-jinjin-golden-retriever-expedition-b.webp"
       }
     },
     {
@@ -159,7 +173,9 @@
         "happy": "assets/poses/07-heitang-labrador-happy.webp",
         "act-a": "assets/poses/07-heitang-labrador-act-a.webp",
         "act-b": "assets/poses/07-heitang-labrador-act-b.webp",
-        "ball": "assets/poses/07-heitang-labrador-ball.webp"
+        "ball": "assets/poses/07-heitang-labrador-ball.webp",
+        "expedition-a": "assets/expedition/07-heitang-labrador-expedition-a.webp",
+        "expedition-b": "assets/expedition/07-heitang-labrador-expedition-b.webp"
       }
     },
     {
@@ -179,7 +195,9 @@
         "happy": "assets/poses/08-qiuqiu-old-english-sheepdog-happy.webp",
         "act-a": "assets/poses/08-qiuqiu-old-english-sheepdog-act-a.webp",
         "act-b": "assets/poses/08-qiuqiu-old-english-sheepdog-act-b.webp",
-        "ball": "assets/poses/08-qiuqiu-old-english-sheepdog-ball.webp"
+        "ball": "assets/poses/08-qiuqiu-old-english-sheepdog-ball.webp",
+        "expedition-a": "assets/expedition/08-qiuqiu-old-english-sheepdog-expedition-a.webp",
+        "expedition-b": "assets/expedition/08-qiuqiu-old-english-sheepdog-expedition-b.webp"
       }
     },
     {
@@ -199,7 +217,9 @@
         "happy": "assets/poses/09-huihui-husky-happy.webp",
         "act-a": "assets/poses/09-huihui-husky-act-a.webp",
         "act-b": "assets/poses/09-huihui-husky-act-b.webp",
-        "ball": "assets/poses/09-huihui-husky-ball.webp"
+        "ball": "assets/poses/09-huihui-husky-ball.webp",
+        "expedition-a": "assets/expedition/09-huihui-husky-expedition-a.webp",
+        "expedition-b": "assets/expedition/09-huihui-husky-expedition-b.webp"
       }
     },
     {
@@ -219,7 +239,9 @@
         "happy": "assets/poses/10-yuanyuan-pug-happy.webp",
         "act-a": "assets/poses/10-yuanyuan-pug-act-a.webp",
         "act-b": "assets/poses/10-yuanyuan-pug-act-b.webp",
-        "ball": "assets/poses/10-yuanyuan-pug-ball.webp"
+        "ball": "assets/poses/10-yuanyuan-pug-ball.webp",
+        "expedition-a": "assets/expedition/10-yuanyuan-pug-expedition-a.webp",
+        "expedition-b": "assets/expedition/10-yuanyuan-pug-expedition-b.webp"
       }
     },
     {
@@ -239,7 +261,9 @@
         "happy": "assets/poses/11-xuexue-samoyed-happy.webp",
         "act-a": "assets/poses/11-xuexue-samoyed-act-a.webp",
         "act-b": "assets/poses/11-xuexue-samoyed-act-b.webp",
-        "ball": "assets/poses/11-xuexue-samoyed-ball.webp"
+        "ball": "assets/poses/11-xuexue-samoyed-ball.webp",
+        "expedition-a": "assets/expedition/11-xuexue-samoyed-expedition-a.webp",
+        "expedition-b": "assets/expedition/11-xuexue-samoyed-expedition-b.webp"
       }
     },
     {
@@ -259,7 +283,9 @@
         "happy": "assets/poses/12-bengbeng-border-collie-happy.webp",
         "act-a": "assets/poses/12-bengbeng-border-collie-act-a.webp",
         "act-b": "assets/poses/12-bengbeng-border-collie-act-b.webp",
-        "ball": "assets/poses/12-bengbeng-border-collie-ball.webp"
+        "ball": "assets/poses/12-bengbeng-border-collie-ball.webp",
+        "expedition-a": "assets/expedition/12-bengbeng-border-collie-expedition-a.webp",
+        "expedition-b": "assets/expedition/12-bengbeng-border-collie-expedition-b.webp"
       }
     },
     {
@@ -279,7 +305,9 @@
         "happy": "assets/poses/13-pipi-french-bulldog-happy.webp",
         "act-a": "assets/poses/13-pipi-french-bulldog-act-a.webp",
         "act-b": "assets/poses/13-pipi-french-bulldog-act-b.webp",
-        "ball": "assets/poses/13-pipi-french-bulldog-ball.webp"
+        "ball": "assets/poses/13-pipi-french-bulldog-ball.webp",
+        "expedition-a": "assets/expedition/13-pipi-french-bulldog-expedition-a.webp",
+        "expedition-b": "assets/expedition/13-pipi-french-bulldog-expedition-b.webp"
       }
     },
     {
@@ -299,7 +327,9 @@
         "happy": "assets/poses/14-tangtang-maltese-happy.webp",
         "act-a": "assets/poses/14-tangtang-maltese-act-a.webp",
         "act-b": "assets/poses/14-tangtang-maltese-act-b.webp",
-        "ball": "assets/poses/14-tangtang-maltese-ball.webp"
+        "ball": "assets/poses/14-tangtang-maltese-ball.webp",
+        "expedition-a": "assets/expedition/14-tangtang-maltese-expedition-a.webp",
+        "expedition-b": "assets/expedition/14-tangtang-maltese-expedition-b.webp"
       }
     },
     {
@@ -319,7 +349,9 @@
         "happy": "assets/poses/15-dawang-akita-happy.webp",
         "act-a": "assets/poses/15-dawang-akita-act-a.webp",
         "act-b": "assets/poses/15-dawang-akita-act-b.webp",
-        "ball": "assets/poses/15-dawang-akita-ball.webp"
+        "ball": "assets/poses/15-dawang-akita-ball.webp",
+        "expedition-a": "assets/expedition/15-dawang-akita-expedition-a.webp",
+        "expedition-b": "assets/expedition/15-dawang-akita-expedition-b.webp"
       }
     }
   ],

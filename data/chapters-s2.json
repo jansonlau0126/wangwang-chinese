@@ -1,0 +1,211 @@
+{
+  "chapters": [
+    {
+      "id": "ch01",
+      "name": "出發準備",
+      "dayStart": 1,
+      "dayEnd": 4,
+      "dogSlugs": [
+        "01-maomao-toy-poodle",
+        "03-duoduo-corgi"
+      ],
+      "blurb": "集合！寫完先再跑",
+      "unlockHint": "「出發準備」開放！"
+    },
+    {
+      "id": "ch02",
+      "name": "認路出發",
+      "dayStart": 5,
+      "dayEnd": 8,
+      "dogSlugs": [
+        "12-bengbeng-border-collie"
+      ],
+      "blurb": "呢邊！跟我",
+      "unlockHint": "「認路出發」開放！"
+    },
+    {
+      "id": "ch03",
+      "name": "開心打氣",
+      "dayStart": 9,
+      "dayEnd": 12,
+      "dogSlugs": [
+        "10-yuanyuan-pug"
+      ],
+      "blurb": "攰就笑一笑",
+      "unlockHint": "「開心打氣」開放！"
+    },
+    {
+      "id": "ch04",
+      "name": "城市初見",
+      "dayStart": 13,
+      "dayEnd": 16,
+      "dogSlugs": [
+        "04-doudou-dachshund"
+      ],
+      "blurb": "前面有咩好玩？",
+      "unlockHint": "「城市初見」開放！"
+    },
+    {
+      "id": "ch05",
+      "name": "城市帶路",
+      "dayStart": 17,
+      "dayEnd": 20,
+      "dogSlugs": [
+        "02-bobo-shiba"
+      ],
+      "blurb": "慢慢嚟，我睇住",
+      "unlockHint": "「城市帶路」開放！"
+    },
+    {
+      "id": "ch06",
+      "name": "城市收尾",
+      "dayStart": 21,
+      "dayEnd": 24,
+      "dogSlugs": [
+        "06-jinjin-golden-retriever"
+      ],
+      "blurb": "我嚟幫手！",
+      "unlockHint": "「城市收尾」開放！"
+    },
+    {
+      "id": "ch07",
+      "name": "自然奇遇",
+      "dayStart": 25,
+      "dayEnd": 28,
+      "dogSlugs": [
+        "09-huihui-husky"
+      ],
+      "blurb": "唔驚！向前行",
+      "unlockHint": "「自然奇遇」開放！"
+    },
+    {
+      "id": "ch08",
+      "name": "草地探索",
+      "dayStart": 29,
+      "dayEnd": 32,
+      "dogSlugs": [
+        "08-qiuqiu-old-english-sheepdog"
+      ],
+      "blurb": "跟隊，唔好散",
+      "unlockHint": "「草地探索」開放！"
+    },
+    {
+      "id": "ch09",
+      "name": "水虹同行",
+      "dayStart": 33,
+      "dayEnd": 36,
+      "dogSlugs": [
+        "07-heitang-labrador"
+      ],
+      "blurb": "放喺我度啦",
+      "unlockHint": "「水虹同行」開放！"
+    },
+    {
+      "id": "ch10",
+      "name": "家庭時光",
+      "dayStart": 37,
+      "dayEnd": 40,
+      "dogSlugs": [
+        "14-tangtang-maltese"
+      ],
+      "blurb": "寫完記得休息",
+      "unlockHint": "「家庭時光」開放！"
+    },
+    {
+      "id": "ch11",
+      "name": "細心照顧",
+      "dayStart": 41,
+      "dayEnd": 44,
+      "dogSlugs": [
+        "05-baibai-bichon"
+      ],
+      "blurb": "唔緊要，再嚟一次",
+      "unlockHint": "「細心照顧」開放！"
+    },
+    {
+      "id": "ch12",
+      "name": "好好休息",
+      "dayStart": 45,
+      "dayEnd": 48,
+      "dogSlugs": [
+        "11-xuexue-samoyed"
+      ],
+      "blurb": "夢見去得好遠…",
+      "unlockHint": "「好好休息」開放！"
+    },
+    {
+      "id": "ch13",
+      "name": "學校認真",
+      "dayStart": 49,
+      "dayEnd": 52,
+      "dogSlugs": [
+        "13-pipi-french-bulldog"
+      ],
+      "blurb": "我護住你",
+      "unlockHint": "「學校認真」開放！"
+    },
+    {
+      "id": "ch14",
+      "name": "勇氣同行",
+      "dayStart": 53,
+      "dayEnd": 56,
+      "dogSlugs": [
+        "15-dawang-akita"
+      ],
+      "blurb": "做得好",
+      "unlockHint": "「勇氣同行」開放！"
+    },
+    {
+      "id": "ch15",
+      "name": "回家分享",
+      "dayStart": 57,
+      "dayEnd": 60,
+      "dogSlugs": [],
+      "blurb": "返屋企啦",
+      "unlockHint": "「回家分享」開放！"
+    }
+  ],
+  "stages": [
+    {
+      "id": "prepare",
+      "name": "出發準備站",
+      "dayStart": 1,
+      "dayEnd": 12,
+      "hint": "裝備好，就出發！",
+      "done": "裝備齊喇！下一站城市～"
+    },
+    {
+      "id": "city",
+      "name": "城市探險站",
+      "dayStart": 13,
+      "dayEnd": 24,
+      "hint": "街燈、巴士、商店——小心過馬路",
+      "done": "城市行完！下一站大自然～"
+    },
+    {
+      "id": "nature",
+      "name": "自然奇遇站",
+      "dayStart": 25,
+      "dayEnd": 36,
+      "hint": "晴朗、晚霞、虹同冰",
+      "done": "自然站完成！下一站家庭～"
+    },
+    {
+      "id": "home",
+      "name": "家庭日常站",
+      "dayStart": 37,
+      "dayEnd": 48,
+      "hint": "食飽、洗靚、好好休息",
+      "done": "家庭站完成！下一站學校～"
+    },
+    {
+      "id": "school",
+      "name": "學校夢想站",
+      "dayStart": 49,
+      "dayEnd": 60,
+      "hint": "上課、考試、努力爭取",
+      "done": "第二季完！返屋企溫習啦"
+    }
+  ],
+  "mapTitle": "汪汪探險隊 · 第二季地圖"
+}

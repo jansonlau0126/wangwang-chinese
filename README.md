@@ -37,6 +37,8 @@
 
 筆順核對見 [`docs/STROKE_VERIFICATION.md`](./docs/STROKE_VERIFICATION.md)。重排字：出、母、的、來、飛。
 
+**第二季**：內容／資產優先（字表 v4＋EDB 全核、故事文案、探險相 brief、SFX 資產）；**程式暫緩，做晒非程式嘢先一次過改** — 見 [`docs/season2/DECISIONS_AND_TODO.md`](./docs/season2/DECISIONS_AND_TODO.md)。
+
 ## 本地運行
 
 ```bash

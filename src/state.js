@@ -1,7 +1,8 @@
-import { characters, dayChars, DAY_TOTAL, findChar, weekOfDay } from "./chars.js";
+import { characters, charactersS2, dayChars, DAY_TOTAL, S2_DAY_TOTAL, findChar, weekOfDay, dayTotalForSeason } from "./chars.js";
 import { dogBySlug, dogs } from "./dogs.js";
 import {
   albumProgress,
+  albumPoseTotal,
   blankAlbumEntry,
   canAwardBall,
   canBuyPose,
@@ -11,8 +12,10 @@ import {
   POSE_COSTS,
   remainingBoneCap,
   todayKey,
+  yesterdayKey,
 } from "./economy.js";
 import { dayHintTotal, unlockedDogCount } from "./strokeOrder.js";
+import chaptersPack from "../data/chapters-s2.json";
 
 export const STORAGE_KEY = "wangwang.zhongwen.v3";
 export const LEGACY_KEYS = ["wangwang.zhongwen.v2", "wangwang.zhongwen.v1"];
@@ -20,9 +23,24 @@ export const LEGACY_KEYS = ["wangwang.zhongwen.v2", "wangwang.zhongwen.v1"];
 const LESSON_STAGES = ["listen", "watch", "guided", "light", "free", "cheer"];
 const REVIEW_STAGES = ["watch", "light", "free", "cheer"];
 const SCREENS = ["home", "map", "cards", "dogs", "album", "about", "practice", "reward"];
+const STREAK_MILESTONES = [3, 7, 14, 30];
+const STAGE_MILESTONE_DAYS = [12, 24, 36, 48];
 
 export function blankHints() {
   return { guided: 0, light: 0, free: 0 };
+}
+
+function blankS2() {
+  return {
+    completedDays: [],
+    cursorDay: 1,
+    started: false,
+    unlockedChapters: [],
+    streak: 0,
+    lastLessonDate: null,
+    stickers: [],
+    finalePlayed: false,
+  };
 }
 
 export function defaultState() {
@@ -30,7 +48,7 @@ export function defaultState() {
   for (const dog of dogs) album[dog.slug] = blankAlbumEntry();
   album[dogs[0].slug].sit = true;
   return {
-    version: 3,
+    version: 4,
     completedDays: [],
     cursorDay: 1,
     active: null,
@@ -49,6 +67,9 @@ export function defaultState() {
     bones: 0,
     boneLedger: [],
     album,
+    season: "s1",
+    s2: blankS2(),
+    stickers: [],
   };
 }
 
@@ -58,6 +79,20 @@ function ensureAlbumSits(state) {
     if (!state.album[dog.slug]) state.album[dog.slug] = blankAlbumEntry();
     state.album[dog.slug].sit = true;
   });
+}
+
+function normalizeS2(raw) {
+  const base = blankS2();
+  const s2 = { ...base, ...(raw?.s2 || {}) };
+  s2.completedDays = [...new Set((s2.completedDays || []).filter((day) => day >= 1 && day <= S2_DAY_TOTAL))];
+  if (!s2.cursorDay || s2.cursorDay < 1 || s2.cursorDay > S2_DAY_TOTAL) s2.cursorDay = 1;
+  s2.started = Boolean(s2.started);
+  s2.unlockedChapters = Array.isArray(s2.unlockedChapters) ? [...s2.unlockedChapters] : [];
+  s2.streak = Math.max(0, s2.streak | 0);
+  s2.lastLessonDate = s2.lastLessonDate || null;
+  s2.stickers = Array.isArray(s2.stickers) ? [...s2.stickers] : [];
+  s2.finalePlayed = Boolean(s2.finalePlayed);
+  return s2;
 }
 
 function normalize(raw) {
@@ -78,17 +113,21 @@ function normalize(raw) {
   merged.album = eco.album;
   ensureAlbumSits(merged);
 
+  merged.season = merged.season === "s2" ? "s2" : "s1";
+  merged.s2 = normalizeS2(merged);
+  merged.stickers = Array.isArray(merged.stickers) ? merged.stickers : [];
+
   if (!SCREENS.includes(merged.screen)) merged.screen = "home";
   if (merged.screen === "practice" && !merged.active) merged.screen = "home";
   if (merged.screen === "reward" && !merged.pendingReward) merged.screen = "home";
   if (merged.screen === "album" && !merged.albumDog) merged.screen = "dogs";
-  const maxWeek = Math.ceil(DAY_TOTAL / 5);
+  const maxWeek = Math.ceil(dayTotalForSeason(merged.season) / 5);
   if (!merged.cardWeek || merged.cardWeek < 1 || merged.cardWeek > maxWeek) {
-    merged.cardWeek = weekOfDay(merged.cursorDay) || 1;
+    merged.cardWeek = weekOfDay(activeCursor(merged)) || 1;
   }
   if (merged.cardDetail && !findChar(merged.cardDetail)) merged.cardDetail = null;
   if (!["home", "cards"].includes(merged.reviewReturn)) merged.reviewReturn = "home";
-  merged.version = 3;
+  merged.version = 4;
   delete merged.balls;
   return merged;
 }
@@ -125,30 +164,107 @@ export function unlockedCount(state) {
   return unlockedDogCount(state.completedDays.length, dogs.length);
 }
 
-export function isDayDone(state, day = state.cursorDay) {
-  return state.completedDays.includes(day);
-}
-
-export function seasonComplete(state) {
+export function s1Complete(state) {
   return state.completedDays.length >= DAY_TOTAL;
 }
 
-export function isCharUnlocked(state, entry) {
+export function s2Complete(state) {
+  return (state.s2?.completedDays?.length || 0) >= S2_DAY_TOTAL;
+}
+
+export function seasonComplete(state) {
+  // Legacy name: S1 complete (kept for callers / home that mean "first season done")
+  return s1Complete(state);
+}
+
+export function activeSeason(state) {
+  return state.season === "s2" ? "s2" : "s1";
+}
+
+export function activeCompleted(state) {
+  return activeSeason(state) === "s2" ? state.s2.completedDays : state.completedDays;
+}
+
+export function activeCursor(state) {
+  return activeSeason(state) === "s2" ? state.s2.cursorDay : state.cursorDay;
+}
+
+export function chaptersUnlockedByProgress(completedCount) {
+  // At start (0 done) unlock ch01; every +4 completed days unlocks one more.
+  const count = Math.min(15, 1 + Math.floor(Math.max(0, completedCount) / 4));
+  return Array.from({ length: count }, (_, i) => `ch${String(i + 1).padStart(2, "0")}`);
+}
+
+export function chapterIdForDay(day) {
+  const n = Math.ceil(day / 4);
+  return `ch${String(n).padStart(2, "0")}`;
+}
+
+export function stageForDay(day) {
+  return chaptersPack.stages.find((s) => day >= s.dayStart && day <= s.dayEnd) || null;
+}
+
+export function isDayDone(state, day = activeCursor(state), season = activeSeason(state)) {
+  const list = season === "s2" ? state.s2.completedDays : state.completedDays;
+  return list.includes(day);
+}
+
+export function isCharUnlocked(state, entry, season = null) {
   if (!entry) return false;
+  const useS2 = entry.season === 2 || season === "s2" || (season == null && activeSeason(state) === "s2");
+  if (useS2) {
+    if (!state.s2?.started) return false;
+    if (state.s2.completedDays.includes(entry.day)) return true;
+    if (entry.day < state.s2.cursorDay) return true;
+    if (entry.day === state.s2.cursorDay) return true;
+    return false;
+  }
   if (state.completedDays.includes(entry.day)) return true;
   if (entry.day < state.cursorDay) return true;
   if (entry.day === state.cursorDay) return true;
   return false;
 }
 
+export function canStartS2(state) {
+  return s1Complete(state) && !state.s2.started;
+}
+
+export function canWriteS2(state) {
+  return s1Complete(state) && state.s2.started;
+}
+
+export function startSeason2(state) {
+  if (!canStartS2(state)) return false;
+  state.s2.started = true;
+  state.s2.cursorDay = 1;
+  state.s2.unlockedChapters = ["ch01"];
+  state.season = "s2";
+  state.cardWeek = 1;
+  state.screen = "home";
+  return true;
+}
+
+export function switchSeason(state, season) {
+  if (season === "s2") {
+    if (!canWriteS2(state) && !state.s2.started) return false;
+    if (!s1Complete(state)) return false;
+    state.season = "s2";
+  } else {
+    state.season = "s1";
+  }
+  state.cardWeek = weekOfDay(activeCursor(state)) || 1;
+  return true;
+}
+
 export function currentEntry(state) {
-  if (!state.active) return dayChars(state.cursorDay)[0];
+  const season = state.active?.season || activeSeason(state);
+  if (!state.active) return dayChars(activeCursor(state), season)[0];
   if (state.active.reviewSession) {
     const ch = state.active.queue[state.active.index];
-    return findChar(ch) || dayChars(1)[0];
+    return findChar(ch) || dayChars(1, "s1")[0];
   }
-  if (state.active.review) return findChar(state.active.reviewChar) || dayChars(state.cursorDay)[0];
-  return dayChars(state.active.day)[state.active.index] || dayChars(state.active.day)[0];
+  if (state.active.review) return findChar(state.active.reviewChar) || dayChars(state.active.day, season)[0];
+  return dayChars(state.active.day, season)[state.active.index] || dayChars(state.active.day, season)[0];
 }
 
 export function activeStages(state) {
@@ -156,9 +272,10 @@ export function activeStages(state) {
 }
 
 export function tileStatus(state, day, index) {
-  if (isDayDone(state, day)) return "done";
-  if (day !== state.cursorDay) return "todo";
-  if (!state.active || state.active.day !== day || state.active.review || state.active.reviewSession) {
+  const season = activeSeason(state);
+  if (isDayDone(state, day, season)) return "done";
+  if (day !== activeCursor(state)) return "todo";
+  if (!state.active || state.active.day !== day || state.active.review || state.active.reviewSession || (state.active.season || "s1") !== season) {
     return index === 0 ? "next" : "todo";
   }
   if (index < state.active.index) return "done";
@@ -187,9 +304,29 @@ export function bonesToday(state) {
 }
 
 export function startPractice(state) {
-  if (seasonComplete(state) || isDayDone(state)) return false;
-  if (!state.active || state.active.day !== state.cursorDay || state.active.review || state.active.reviewSession) {
+  const season = activeSeason(state);
+  if (season === "s2") {
+    if (!canWriteS2(state)) return false;
+    if (s2Complete(state) || isDayDone(state, state.s2.cursorDay, "s2")) return false;
+    if (!state.active || state.active.day !== state.s2.cursorDay || state.active.review || state.active.reviewSession || state.active.season !== "s2") {
+      state.active = {
+        season: "s2",
+        day: state.s2.cursorDay,
+        index: 0,
+        stage: "listen",
+        hints: {},
+        slow: false,
+        review: false,
+        reviewSession: false,
+      };
+    }
+    state.screen = "practice";
+    return true;
+  }
+  if (s1Complete(state) || isDayDone(state, state.cursorDay, "s1")) return false;
+  if (!state.active || state.active.day !== state.cursorDay || state.active.review || state.active.reviewSession || state.active.season === "s2") {
     state.active = {
+      season: "s1",
       day: state.cursorDay,
       index: 0,
       stage: "listen",
@@ -209,7 +346,9 @@ export function beginReview(state, char, returnTo = "cards") {
   if (!entry) return;
   if (state.active && !state.active.review && !state.active.reviewSession) state.savedActive = state.active;
   state.reviewReturn = returnTo;
+  const season = entry.season === 2 ? "s2" : "s1";
   state.active = {
+    season,
     day: entry.day,
     index: 0,
     stage: "listen",
@@ -230,7 +369,8 @@ export function startWarmup(state) {
   if (state.active && !state.active.review && !state.active.reviewSession) state.savedActive = state.active;
   state.reviewReturn = "home";
   state.active = {
-    day: state.cursorDay,
+    season: activeSeason(state),
+    day: activeCursor(state),
     index: 0,
     stage: "watch",
     hints: {},
@@ -244,7 +384,10 @@ export function startWarmup(state) {
 }
 
 export function pickWarmupChars(state, n = 3) {
-  const learned = characters.filter((entry) => state.completedDays.includes(entry.day));
+  const season = activeSeason(state);
+  const pool = season === "s2" ? charactersS2 : characters;
+  const done = season === "s2" ? state.s2.completedDays : state.completedDays;
+  const learned = pool.filter((entry) => done.includes(entry.day));
   if (!learned.length) return [];
   const ranked = learned
     .map((entry) => {
@@ -262,7 +405,6 @@ export function pickWarmupChars(state, n = 3) {
     picked.push(row.char);
     if (picked.length >= n) break;
   }
-  // fill if needed
   while (picked.length < Math.min(n, learned.length)) {
     const extra = learned.find((e) => !picked.includes(e.char));
     if (!extra) break;
@@ -340,7 +482,8 @@ function finishCharacter(state) {
     return;
   }
 
-  const list = dayChars(state.active.day);
+  const season = state.active.season || "s1";
+  const list = dayChars(state.active.day, season);
   if (state.active.index + 1 < list.length) {
     state.active.index += 1;
     state.active.stage = "listen";
@@ -366,6 +509,7 @@ function completeWarmup(state) {
 
   state.pendingReward = {
     kind: "warmup",
+    season: state.active?.season || activeSeason(state),
     companion,
     bonesEarned: earned,
     bonesToday: bonesToday(state),
@@ -379,15 +523,96 @@ function completeWarmup(state) {
   state.screen = "reward";
 }
 
+function updateS2Streak(state) {
+  const today = todayKey();
+  const last = state.s2.lastLessonDate;
+  if (last === today) return null;
+  if (last === yesterdayKey()) state.s2.streak += 1;
+  else state.s2.streak = 1;
+  state.s2.lastLessonDate = today;
+  if (STREAK_MILESTONES.includes(state.s2.streak)) {
+    const id = `streak-${state.s2.streak}`;
+    if (!state.s2.stickers.includes(id)) state.s2.stickers.push(id);
+    return state.s2.streak;
+  }
+  return null;
+}
+
 function completeDay(state) {
+  const season = state.active.season || "s1";
   const day = state.active.day;
-  const firstTime = !state.completedDays.includes(day);
   const companion = state.companion;
   let newDog = null;
   let ball = null;
   const earned = [];
   const zeroHints = dayHintTotal(state.active.hints) === 0;
+  const chars = dayChars(day, season).map((e) => e.char);
 
+  if (season === "s2") {
+    const firstTime = !state.s2.completedDays.includes(day);
+    let newChapter = null;
+    let stageComplete = null;
+    let streakMilestone = null;
+    let finale = false;
+
+    if (firstTime) {
+      const beforeChapters = new Set(state.s2.unlockedChapters);
+      state.s2.completedDays.push(day);
+      state.companionDays[companion] = (state.companionDays[companion] || 0) + 1;
+      state.s2.unlockedChapters = chaptersUnlockedByProgress(state.s2.completedDays.length);
+      for (const id of state.s2.unlockedChapters) {
+        if (!beforeChapters.has(id) && id !== "ch01") newChapter = id;
+      }
+      if (STAGE_MILESTONE_DAYS.includes(day)) {
+        const stage = stageForDay(day);
+        if (stage) {
+          stageComplete = stage.id;
+          const sid = `stage-${stage.id}`;
+          if (!state.s2.stickers.includes(sid)) state.s2.stickers.push(sid);
+        }
+      }
+      if (applyGrant(state, "lesson").granted) earned.push("lesson");
+      if (zeroHints && applyGrant(state, "zero").granted) earned.push("zero");
+      streakMilestone = updateS2Streak(state);
+      if (state.s2.completedDays.length >= S2_DAY_TOTAL) {
+        finale = true;
+        if (!state.s2.stickers.includes("finale")) state.s2.stickers.push("finale");
+      }
+    }
+
+    const albumEntry = state.album[companion];
+    if (canAwardBall(albumEntry, { zeroHints, isCompanion: true })) {
+      albumEntry.ball = true;
+      ball = companion;
+    }
+
+    state.pendingReward = {
+      kind: "lesson",
+      season: "s2",
+      day,
+      chars,
+      companion,
+      newDog: null,
+      ball,
+      bonesEarned: earned,
+      bonesToday: bonesToday(state),
+      firstTime,
+      newChapter,
+      stageComplete,
+      streakMilestone,
+      s2Complete: finale,
+      shareKind: finale ? "finale" : newChapter ? "chapter" : streakMilestone ? "streak" : stageComplete ? "stage" : "daily",
+      playFinale: finale && !state.s2.finalePlayed,
+    };
+    if (finale) state.s2.finalePlayed = true;
+    state.active = null;
+    state.savedActive = null;
+    state.screen = "reward";
+    return;
+  }
+
+  // S1
+  const firstTime = !state.completedDays.includes(day);
   if (firstTime) {
     const before = unlockedDogCount(state.completedDays.length, dogs.length);
     state.completedDays.push(day);
@@ -409,13 +634,16 @@ function completeDay(state) {
 
   state.pendingReward = {
     kind: "lesson",
+    season: "s1",
     day,
+    chars,
     companion,
     newDog,
     ball,
     bonesEarned: earned,
     bonesToday: bonesToday(state),
     firstTime,
+    shareKind: "daily",
   };
   state.active = null;
   state.savedActive = null;
@@ -423,7 +651,15 @@ function completeDay(state) {
 }
 
 export function advanceDay(state) {
-  if (!isDayDone(state) || state.cursorDay >= DAY_TOTAL) return false;
+  const season = activeSeason(state);
+  if (season === "s2") {
+    if (!isDayDone(state, state.s2.cursorDay, "s2") || state.s2.cursorDay >= S2_DAY_TOTAL) return false;
+    state.s2.cursorDay += 1;
+    state.pendingReward = null;
+    state.active = null;
+    return true;
+  }
+  if (!isDayDone(state, state.cursorDay, "s1") || state.cursorDay >= DAY_TOTAL) return false;
   state.cursorDay += 1;
   state.pendingReward = null;
   state.active = null;
@@ -479,7 +715,8 @@ export function dogAlbumProgress(state, slug) {
 }
 
 export function recordList(state) {
-  return characters
+  const pool = activeSeason(state) === "s2" ? charactersS2 : characters;
+  return pool
     .filter((entry) => state.records[entry.char])
     .map((entry) => ({ ...entry, hints: state.records[entry.char].hints }));
 }
@@ -489,7 +726,7 @@ export function companionName(state) {
 }
 
 export function setCardWeek(state, week) {
-  const maxWeek = Math.ceil(DAY_TOTAL / 5);
+  const maxWeek = Math.ceil(dayTotalForSeason(activeSeason(state)) / 5);
   state.cardWeek = Math.max(1, Math.min(maxWeek, week | 0));
 }
 
@@ -504,4 +741,8 @@ export function closeCardDetail(state) {
   state.cardDetail = null;
 }
 
-export { paidPosesReady, POSE_COSTS };
+export function getChaptersPack() {
+  return chaptersPack;
+}
+
+export { paidPosesReady, POSE_COSTS, albumPoseTotal, S2_DAY_TOTAL, DAY_TOTAL };

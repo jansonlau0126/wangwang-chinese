@@ -1,7 +1,8 @@
 /**
- * Album unlock simulation for Season 1.
- * Sit free on dog unlock. Paid poses cost bones. Ball free when that dog is
- * companion on a zero-hint day and all paid poses are unlocked.
+ * Album unlock simulation for Season 1+2.
+ * Sit free on dog unlock. Paid poses + expedition cost bones.
+ * Ball free when companion + zero-hint + all S1 paid poses unlocked.
+ * Target: ~2 years (≈96–110 weeks at 5 days/week) to fill 135 photos.
  */
 export const POSE_COSTS = {
   happy: 4,
@@ -9,6 +10,8 @@ export const POSE_COSTS = {
   stretch: 5,
   "act-a": 5,
   "act-b": 6,
+  "expedition-a": 8,
+  "expedition-b": 10,
 };
 export const PAID_POSES = /** @type {(keyof typeof POSE_COSTS)[]} */ ([
   "happy",
@@ -17,12 +20,18 @@ export const PAID_POSES = /** @type {(keyof typeof POSE_COSTS)[]} */ ([
   "act-a",
   "act-b",
 ]);
-export const BONES_PER_DOG = PAID_POSES.reduce((s, p) => s + POSE_COSTS[p], 0); // 24
+export const EXPEDITION_POSES = /** @type {(keyof typeof POSE_COSTS)[]} */ ([
+  "expedition-a",
+  "expedition-b",
+]);
+export const BUYABLE_POSES = [...PAID_POSES, ...EXPEDITION_POSES];
+export const BONES_PER_DOG = BUYABLE_POSES.reduce((s, p) => s + POSE_COSTS[p], 0); // 42
 export const DOG_TOTAL = 15;
-export const TOTAL_PAID_BONES = BONES_PER_DOG * DOG_TOTAL; // 360
+export const TOTAL_PAID_BONES = BONES_PER_DOG * DOG_TOTAL; // 630
 export const DAILY_BONE_CAP = 2;
-export const LESSON_DAYS = 60;
-export const ALBUM_TOTAL = DOG_TOTAL * 7; // 105
+export const LESSON_DAYS = 120; // S1 60 + S2 60
+export const ALBUM_SLOTS_PER_DOG = 9; // sit + 5 paid + 2 expedition + ball
+export const ALBUM_TOTAL = DOG_TOTAL * ALBUM_SLOTS_PER_DOG; // 135
 
 export function bonesForDay({ lesson = false, review = false, zeroHint = false }) {
   let earned = 0;
@@ -45,7 +54,7 @@ function mulberry32(seed) {
 }
 
 export function simulateRealistic({
-  weeksMax = 80,
+  weeksMax = 160,
   daysPerWeek = 5,
   reviewFraction = 0.5,
   zeroHintRate = 0.3,
@@ -67,7 +76,7 @@ export function simulateRealistic({
 
   const trySpend = () => {
     for (let d = 0; d < dogsUnlocked; d += 1) {
-      for (const pose of PAID_POSES) {
+      for (const pose of BUYABLE_POSES) {
         if (album[d].has(pose)) continue;
         const cost = POSE_COSTS[pose];
         if (bones >= cost) {
@@ -105,7 +114,9 @@ export function simulateRealistic({
 
       if (willLesson) {
         lessonDone += 1;
-        const after = Math.min(DOG_TOTAL, 1 + Math.floor(lessonDone / 4));
+        // Dogs unlock only from S1 progress (first 60 lesson days)
+        const s1Done = Math.min(60, lessonDone);
+        const after = Math.min(DOG_TOTAL, 1 + Math.floor(s1Done / 4));
         while (dogsUnlocked < after) {
           dogsUnlocked += 1;
           album[dogsUnlocked - 1].add("sit");
@@ -151,12 +162,14 @@ export function runAssertions() {
   const binge = simulateBinge();
   const errors = [];
   if (realistic.photos < ALBUM_TOTAL) errors.push(`photos ${realistic.photos} < ${ALBUM_TOTAL}`);
-  if (realistic.weeks < 48 || realistic.weeks > 56) {
-    errors.push(`realistic weeks ${realistic.weeks} outside 48–56`);
+  // ~2 years at 5 days/week ≈ 96–110 weeks; allow 90–120 slack
+  if (realistic.weeks < 90 || realistic.weeks > 120) {
+    errors.push(`realistic weeks ${realistic.weeks} outside 90–120 (≈兩年目標)`);
   }
   if (binge.minDaysForPaidPoses !== Math.ceil(TOTAL_PAID_BONES / DAILY_BONE_CAP)) {
     errors.push("binge math mismatch");
   }
+  if (ALBUM_TOTAL !== 135) errors.push(`ALBUM_TOTAL ${ALBUM_TOTAL} != 135`);
   return { realistic, binge, errors, POSE_COSTS, BONES_PER_DOG, TOTAL_PAID_BONES, DAILY_BONE_CAP, ALBUM_TOTAL };
 }
 

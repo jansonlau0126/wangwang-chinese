@@ -46,66 +46,71 @@ S1 完成後首頁先出現「開始第二季探險」；未完成可鎖住或�
 同 S1 一樣先用 AI 草稿，標明草稿。
 
 ### D13. `images/momo-expressions` → **已決定（2026-10-06）**
-併入探險相，唔另做表情。
+併入探險相，唔另做表情。**唔另入 `assets/`**（已取消待做）。
 
-> **狀態（2026-10-08）：內容側就緒；EDB 全核已完成。**  
-> 字表草稿 v4、故事、分享卡文案、地圖路標已齊；EDB 筆順全核見 `CHARACTERS_PHASE2_EDB_VERIFICATION.md`。程式／圖片仍待開工（字表入 `data/` 暫緩）。
+> **狀態（2026-10-09）：B 程式批次已喺本機完成**（未 push／未 deploy）。  
+> 方針：非程式 A 已齊；B.1–B.8 本機改完並通過 `npm run check`／build／煙霧 e2e。  
+> 字表 `data/characters-s2.json`、64 overrides、狀態機、相簿探險相、分享卡 MVP、連寫、完季動效、SFX 已納入。
 
 ---
 
-## 待做（已按決定更新）
+## A. 非程式（內容／資產）— 做晒先
 
-### 內容／字表
-| 項目 | 狀態 | 備註 |
-|------|------|------|
-| 起草 180 新字 + 例詞 + 粵拼（避 S1 同 EDB 黑名單） | ✅ | `CHARACTERS_PHASE2_DRAFT.md` **v4**（2026-10-08）；v3 預換 8 + v4 COUNT／DIR 換 20 |
-| 全數 EDB 筆順核對 | ✅ | 2026-10-08 全核：OK 116／ORDER override 64／已換 20／unverifiable 0；見 `CHARACTERS_PHASE2_EDB_VERIFICATION.md` |
-| 改寫 15 段故事，填入定稿字 | ✅ | `02-stories.md` |
-| 分享卡文案定稿 | ✅ | `03-share-cards.md`；無親子卡 |
-| 階段名／地圖路標文案 | ✅ | `04-map-and-stages.md` |
-| 分享卡視覺範例（AI 草稿） | ✅ | `images/share-card-templates/`：每日／章節日記／完季 |
+### 已做 ✅
 
-### 圖片
-| 項目 | 狀態 | 備註 |
-|------|------|------|
-| 毛毛／各狗探險表情／姿勢需求表（寫實風） | ⬜ | D3、D11 |
-| 模板分享卡底板（程式出圖） | ⬜ | D7；文案已定，實作待做 |
-| `images/momo-expressions` 是否入 `assets/` | ⬜ | 命名跟「毛毛」；併入探險相 |
-
-### 程式
-| 項目 | 狀態 | 備註 |
-|------|------|------|
-| S2 進度狀態機（接 S1；完成後解鎖 S2） | ⬜ | D9、D10 |
-| 章節／故事解鎖 | ⬜ | D1；對齊 `04-map-and-stages.md` |
-| 分享卡 DOM／canvas 產生 | ⬜ | D7；無親子卡 |
-| 連寫貼紙／動畫（只獎唔罰） | ⬜ | D5；唔改骨 cap |
-| 相簿探險相／表情格 | ⬜ | D3、D11 |
-
-### 聲音
-| 項目 | 狀態 | 備註 |
-|------|------|------|
-| 裝置 TTS + 粵拼讀音（已落地） | ✅ | D8 |
-| 2–4 個合成短 SFX（完成／骨頭／解鎖） | ⬜ | D8 |
-| 完季短動效（可先無聲） | ⬜ | D1 |
-
-### 上線前檢查
-| 項目 | 狀態 |
+| 項目 | 備註 |
 |------|------|
-| 全字 EDB verified；無 S1 重複；無已知壞字 | ✅ 全核完成（docs）；入 `data/characters.json` 暫緩 |
-| 狗名／slug 同 manifest 一致 | ⬜ |
-| 骨頭 cap／相簿模擬仍然合理 | ⬜ |
-| 無家庭模式殘留入口 | ⬜ |
-| 無新增強制署名素材（讀音授權另核） | ⬜ |
-| `npm run check`／build／e2e | ⬜ |
-| 唔提交 EDB 原始快取／大型模型權重入 git | ✅ | 快取只喺 `/workspace/research/edb/` |
+| 180 字草稿 v4 + EDB 全核 | OK 116／ORDER override 64／換字 20／unverifiable 0；見 `CHARACTERS_PHASE2_DRAFT.md`、`CHARACTERS_PHASE2_EDB_VERIFICATION.md` |
+| 15 段故事、分享卡文案、地圖路標、狀態機設計 | `02-stories.md`、`03-share-cards.md`、`04-map-and-stages.md`、`05-state-machine.md` 等 |
+| 分享卡三款視覺樣板 | `images/share-card-templates/`（每日／章節日記／完季） |
+| 探險相需求表 | `EXPEDITION_PHOTOS_BRIEF.md`（`drafts-in-assets`） |
+| 探險相出圖入 assets | 30×800×450 WebP → `assets/expedition/{slug}-expedition-a/b.webp`；草稿 JPG 喺 `docs/season2/images/expedition-drafts/` |
+| 裝置 TTS + 粵拼 | 已上線 S1（D8） |
+| 合成短 SFX 資產 | `assets/sfx/`：`complete`／`bone`／`unlock`／`streak` |
+| 短音效接線（例外提早） | `src/sfx.js` 同「我」頁開關**已喺本機接好**；資產 ✅；接線已本機有，**等一次過 commit／上線** |
+| `images/momo-expressions` | **唔另入 assets**（D13）；情緒併入探險相 brief → ✅／取消待做 |
+| 文案跟 v4 換字同步 | `02-stories`／分享卡／地圖／brief 章節名已對齊 20 個換字 |
+
+### 待做 ⬜（非程式）
+
+1. ~~用戶批探險相需求表~~ → **✅ 已批**（`EXPEDITION_PHOTOS_BRIEF.md`）
+2. ~~按 brief 出 30 張 AI 草稿 → WebP → `assets/expedition/`~~ → **✅ 已做**（相簿 UI／manifest 留 B 程式批次）
+3. ~~故事／分享卡／地圖文案跟 v4 換字同步~~ → **✅ 已做**（`02-stories.md`／`03-share-cards.md`／`04-map-and-stages.md`／`EXPEDITION_PHOTOS_BRIEF.md` 章節名對齊；狗名「雪雪」同口頭禪「得闲又得」「呢邊」保留）
+4. ~~（可選）完季短動效規格~~ → **✅ 已做**（`09-sound-and-final.md` §3：觸發／文案／視覺／分享卡／貼紙骨頭／聲／優先／資源；實作留 B.6）
+5. ~~momo-expressions 入 assets~~ → **已取消**（見上 ✅）
 
 ---
 
-## 建議開工順序（更新 2026-10-08）
+## B. 程式一次過 — **本機已完成（2026-10-09）**；未 push／未 deploy
 
-1. ~~策字 + 故事 + 分享卡 + 地圖文案~~ ✅  
-2. ~~本機 EDB 全核~~ ✅（`CHARACTERS_PHASE2_EDB_VERIFICATION.md`；草稿 v4）→ **定稿字表入 `data/`（程式暫緩，等批准）**  
-3. **S2 進度狀態機**（D9、D10）+ 章節解鎖（D1）  
-4. 模板分享卡 DOM／canvas MVP（D7）  
-5. 探險相需求表 + 生成／入 assets（D3、D11）  
-6. 連寫貼紙／動畫（D5）+ 合成 SFX（D8）  
+| # | 項目 | 狀態 |
+|---|------|------|
+| B.1 | 定稿字表 → `data/characters-s2.json` + 64 overrides（`stroke-overrides.json`）+ `verifiedAgainstEdb` | ✅ |
+| B.2 | S2 狀態機（D9／D10）+ 章節解鎖（D1）；`data/chapters-s2.json` | ✅ |
+| B.3 | 相簿探險相格 + manifest expedition-a/b + `sim-unlock.mjs`（135 相；約 95 週） | ✅ |
+| B.4 | 分享卡 canvas MVP（`src/shareCard.js`；每日／章節／連寫／完季） | ✅ |
+| B.5 | 連寫只獎唔罰（貼紙）+ streak SFX | ✅ |
+| B.6 | 完季短動效（獎勵頁 CSS；毛毛 expedition-b；分享掣） | ✅ |
+| B.7 | SFX（`src/sfx.js`＋「我」頁開關）納入本批 | ✅ |
+| B.8 | 本機 `npm run check`／build／煙霧 e2e | ✅（未 deploy） |
+
+**上線仍待用戶批准**：`git push`、手動 `npx wrangler@3 pages deploy dist --project-name wangwang-chinese`。
+
+---
+
+## 建議開工順序（2026-10-08：非程式先 → 程式一次過）
+
+### 而家做（A · 非程式）
+
+1. ~~用戶批／改探險相需求表~~ ✅  
+2. ~~出 30 張探險相 → `assets/expedition/`~~ ✅  
+3. ~~文案跟 v4 換字同步~~ ✅  
+4. ~~（可選）完季動效規格~~ ✅（`09-sound-and-final.md` §3）  
+
+### B 程式（2026-10-09 本機完成）
+
+5. ~~字表入 `data/` + overrides~~ ✅  
+6. ~~狀態機＋章節解鎖＋相簿＋分享卡＋連寫＋完季動效＋SFX~~ ✅  
+7. ~~本機檢查~~ ✅ → **仍待**：用戶批准後 push／deploy  
+
+~~舊順序（策字／EDB／需求表／SFX 資產）~~ → 見上表 A 已做 ✅。

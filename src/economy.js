@@ -6,10 +6,15 @@ export const POSE_COSTS = {
   stretch: 5,
   "act-a": 5,
   "act-b": 6,
+  "expedition-a": 8,
+  "expedition-b": 10,
 };
 
+/** Paid poses that gate the free ball photo (S1 set — expedition not required). */
 export const PAID_POSES = ["happy", "sleep", "stretch", "act-a", "act-b"];
-export const ALBUM_POSES = ["sit", ...PAID_POSES, "ball"];
+export const EXPEDITION_POSES = ["expedition-a", "expedition-b"];
+export const BUYABLE_POSES = [...PAID_POSES, ...EXPEDITION_POSES];
+export const ALBUM_POSES = ["sit", ...PAID_POSES, ...EXPEDITION_POSES, "ball"];
 export const DAILY_BONE_CAP = 2;
 
 export const POSE_LABEL = {
@@ -19,6 +24,8 @@ export const POSE_LABEL = {
   stretch: "伸懶腰",
   "act-a": "得意 A",
   "act-b": "得意 B",
+  "expedition-a": "探險 A",
+  "expedition-b": "探險 B",
   ball: "波波相",
 };
 
@@ -27,6 +34,12 @@ export function todayKey(date = new Date()) {
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const d = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
+}
+
+export function yesterdayKey(date = new Date()) {
+  const d = new Date(date);
+  d.setDate(d.getDate() - 1);
+  return todayKey(d);
 }
 
 export function bonesEarnedOnDate(ledger, dateKey) {
@@ -62,12 +75,26 @@ export function grantBone(stateLike, reason, dateKey = todayKey()) {
 }
 
 export function blankAlbumEntry() {
-  return { sit: false, happy: false, sleep: false, stretch: false, "act-a": false, "act-b": false, ball: false };
+  return {
+    sit: false,
+    happy: false,
+    sleep: false,
+    stretch: false,
+    "act-a": false,
+    "act-b": false,
+    "expedition-a": false,
+    "expedition-b": false,
+    ball: false,
+  };
 }
 
 export function albumProgress(entry) {
   if (!entry) return 0;
   return ALBUM_POSES.reduce((n, pose) => n + (entry[pose] ? 1 : 0), 0);
+}
+
+export function albumPoseTotal() {
+  return ALBUM_POSES.length;
 }
 
 export function paidPosesReady(entry) {
@@ -101,7 +128,6 @@ export function migrateEconomy(raw, dogs, unlockedCount) {
   for (const slug of raw.balls || []) {
     if (album[slug]) album[slug].ball = true;
   }
-  // Keep any already-migrated album
   if (raw.album && typeof raw.album === "object") {
     for (const [slug, entry] of Object.entries(raw.album)) {
       if (!album[slug]) continue;
@@ -116,7 +142,6 @@ export function migrateEconomy(raw, dogs, unlockedCount) {
   let ledger = Array.isArray(raw.boneLedger) ? [...raw.boneLedger] : [];
 
   if (!raw.boneLedger && !raw.bones && Array.isArray(raw.completedDays) && raw.completedDays.length) {
-    // Retroactive: 1 bone per completed lesson day (cap naturally 1/day).
     const today = todayKey();
     const base = new Date(`${today}T12:00:00`);
     raw.completedDays.forEach((day, index) => {

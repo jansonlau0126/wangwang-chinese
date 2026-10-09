@@ -1,17 +1,25 @@
-import { dayChars, DAY_TOTAL, WEEK_TOTAL, characters, weekChars, weekOfDay } from "./chars.js";
+import { dayChars, DAY_TOTAL, S2_DAY_TOTAL, WEEK_TOTAL, S2_WEEK_TOTAL, characters, charactersS2, weekChars, weekOfDay } from "./chars.js";
 import { dailyPose, dogBySlug, dogs, heroSrc, poseSrc } from "./dogs.js";
 import {
+  activeCursor,
+  activeSeason,
+  albumPoseTotal,
+  canStartS2,
   companionName,
   dogAlbumProgress,
+  getChaptersPack,
   isCharUnlocked,
   isDayDone,
   recordList,
+  s1Complete,
+  s2Complete,
   seasonComplete,
   tileStatus,
   unlockedCount,
 } from "./state.js";
 import { unlockedDogCount } from "./strokeOrder.js";
 import { ALBUM_POSES, POSE_COSTS, POSE_LABEL, remainingBoneCap } from "./economy.js";
+import { isSfxEnabled } from "./sfx.js";
 
 export const STAGES = [
   { id: "listen", label: "汪汪讀" },
@@ -97,33 +105,82 @@ function dogFace(state, pose) {
 }
 
 function homePose(state) {
-  if (isDayDone(state)) return "sleep";
+  if (isDayDone(state, activeCursor(state), activeSeason(state))) return "sleep";
   return dailyPose(state.companion);
 }
 
 export function renderHome(state) {
-  const day = state.cursorDay;
-  const list = dayChars(day);
-  const done = isDayDone(state, day);
-  const allDone = state.completedDays.length >= DAY_TOTAL;
+  const season = activeSeason(state);
+  const day = activeCursor(state);
+  const list = dayChars(day, season);
+  const done = isDayDone(state, day, season);
   const name = companionName(state);
+  const s1Done = s1Complete(state);
+  const s2Done = s2Complete(state);
+  const s2Started = Boolean(state.s2?.started);
   let primary = "";
-  const seasonDone = seasonComplete(state);
-  if (seasonDone) {
-    primary = '<button type="button" class="btn" data-act="warmup">今日溫習 🦴</button>';
-  } else if (done) {
-    primary = '<button type="button" class="btn" data-act="advance">下一日 3 個字</button>';
-  } else if (state.active && state.active.day === day && !state.active.review && !state.active.reviewSession) {
-    primary = '<button type="button" class="btn" data-act="start">繼續寫</button>';
+  let title = "";
+  let progressLine = "";
+
+  if (season === "s2") {
+    if (s2Done) {
+      primary = '<button type="button" class="btn" data-act="warmup">今日溫習 🦴</button>';
+      title = "第二季完成 · 溫習生字／換相";
+    } else if (done) {
+      primary = '<button type="button" class="btn" data-act="advance">下一日 3 個字</button>';
+      title = `探險第 ${day} 日 · 第 ${weekOfDay(day)} 週`;
+    } else if (state.active && state.active.day === day && state.active.season === "s2" && !state.active.review && !state.active.reviewSession) {
+      primary = '<button type="button" class="btn" data-act="start">繼續探險</button>';
+      title = `繼續探險 · 第 ${day} 日`;
+    } else {
+      primary = '<button type="button" class="btn" data-act="start">開始寫</button>';
+      title = `繼續探險 · 第 ${day} 日`;
+    }
+    progressLine = `第二季已寫 ${state.s2.completedDays.length} / ${S2_DAY_TOTAL} 日 · 連寫 ${state.s2.streak || 0} 日`;
   } else {
-    primary = '<button type="button" class="btn" data-act="start">開始寫</button>';
+    const seasonDone = seasonComplete(state);
+    if (seasonDone) {
+      if (canStartS2(state)) {
+        primary = '<button type="button" class="btn" data-act="start-s2">開始第二季探險</button>';
+        title = "第一季寫完喇！可以開始第二季";
+      } else if (s2Started) {
+        primary = '<button type="button" class="btn" data-act="switch-s2">返第二季探險</button>';
+        title = "第一季溫習模式";
+      } else {
+        primary = '<button type="button" class="btn" data-act="warmup">今日溫習 🦴</button>';
+        title = "第一季寫完喇！繼續溫習攞骨頭";
+      }
+    } else if (done) {
+      primary = '<button type="button" class="btn" data-act="advance">下一日 3 個字</button>';
+      title = `第 ${day} 日 · 第 ${weekOfDay(day)} 週`;
+    } else if (state.active && state.active.day === day && state.active.season !== "s2" && !state.active.review && !state.active.reviewSession) {
+      primary = '<button type="button" class="btn" data-act="start">繼續寫</button>';
+      title = `第 ${day} 日 · 第 ${weekOfDay(day)} 週`;
+    } else {
+      primary = '<button type="button" class="btn" data-act="start">開始寫</button>';
+      title = `第 ${day} 日 · 第 ${weekOfDay(day)} 週`;
+    }
+    progressLine = `已寫 ${state.completedDays.length} / ${DAY_TOTAL} 日 · 識咗 ${unlockedCount(state)} / ${dogs.length} 隻狗`;
   }
-  const warmupExtra = (!seasonDone && state.completedDays.length > 0)
-    ? '<button type="button" class="btn ghost" data-act="warmup">溫習 3 個字</button>'
+
+  const completedLen = season === "s2" ? state.s2.completedDays.length : state.completedDays.length;
+  const warmupExtra = (completedLen > 0 && !(season === "s2" && s2Done && false))
+    ? ((season === "s1" && s1Done && canStartS2(state)) ? "" : '<button type="button" class="btn ghost" data-act="warmup">溫習 3 個字</button>')
     : "";
   const rewardLink = state.pendingReward
     ? '<button type="button" class="btn ghost" data-act="reward">睇返今日骨頭</button>'
     : "";
+  let seasonSwitch = "";
+  if (s1Done && s2Started) {
+    if (season === "s2") {
+      seasonSwitch = '<button type="button" class="btn ghost" data-act="switch-s1">溫習第一季</button>';
+    } else {
+      seasonSwitch = '<button type="button" class="btn ghost" data-act="switch-s2">返第二季</button>';
+    }
+  } else if (!s1Done) {
+    seasonSwitch = '<p class="muted tiny-note">完成第一季先可以開始寫第二季；進度地圖可以預覽故事。</p>';
+  }
+
   const tiles = list.map((entry, index) => {
     const status = tileStatus(state, day, index);
     return `<button type="button" class="tile ${status}" data-act="tile" data-char="${esc(entry.char)}" data-status="${status}">
@@ -132,8 +189,7 @@ export function renderHome(state) {
       <span class="status">${statusLabel(status)}</span>
     </button>`;
   }).join("");
-  const week = weekOfDay(day);
-  const title = seasonDone ? "第一季寫完喇！繼續溫習攞骨頭" : `第 ${day} 日 · 第 ${week} 週`;
+
   return `<div class="page" data-screen="home">
     <header class="top">
       ${brandHtml()}
@@ -143,8 +199,8 @@ export function renderHome(state) {
     <figure class="hero">
       <img src="${esc(heroSrc)}" alt="毛毛伏喺空白田字格簿上面">
       <figcaption>
-        <b>嚟狗狗公園寫好每個字</b>
-        <span>寫完可以再描，唔催命。</span>
+        <b>${season === "s2" ? "第二季 · 汪汪探險隊" : "嚟狗狗公園寫好每個字"}</b>
+        <span>${season === "s2" ? "每寫完幾日就解鎖新章節故事。" : "寫完可以再描，唔催命。"}</span>
       </figcaption>
     </figure>
     <section class="card today">
@@ -154,13 +210,76 @@ export function renderHome(state) {
       </div>
       <p class="muted">今日${esc(name)}陪你。寫錯唔緊要，再嚟一次！</p>
       <div class="tiles">${tiles}</div>
-      <div class="actions">${primary}${warmupExtra}${rewardLink}</div>
+      <div class="actions">${primary}${warmupExtra}${seasonSwitch}${rewardLink}</div>
     </section>
-    <p class="progress-line">已寫 ${state.completedDays.length} / ${DAY_TOTAL} 日 · 識咗 ${unlockedCount(state)} / ${dogs.length} 隻狗</p>
+    <p class="progress-line">${progressLine}</p>
   </div>`;
 }
 
 export function renderMap(state) {
+  if (activeSeason(state) === "s2") return renderMapS2(state);
+  return renderMapS1(state);
+}
+
+function renderMapS2(state) {
+  const pack = getChaptersPack();
+  const completed = state.s2.completedDays.length;
+  const unlocked = new Set(state.s2.unlockedChapters || []);
+  const cursor = state.s2.cursorDay;
+  const started = state.s2.started;
+  const stages = pack.stages.map((stage) => {
+    const done = completed >= stage.dayEnd;
+    const active = completed >= stage.dayStart - 1 && completed < stage.dayEnd;
+    return `<div class="s2-stage${done ? " done" : ""}${active ? " on" : ""}">
+      <b>${esc(stage.name)}</b>
+      <span>${esc(done ? stage.done : stage.hint)}</span>
+      <small>第 ${stage.dayStart}–${stage.dayEnd} 日</small>
+    </div>`;
+  }).join("");
+
+  const chapters = pack.chapters.map((ch) => {
+    const open = unlocked.has(ch.id) || (started && ch.id === "ch01");
+    const done = completed >= ch.dayEnd;
+    const current = cursor >= ch.dayStart && cursor <= ch.dayEnd;
+    const dog = ch.dogSlugs?.[0] ? dogBySlug(ch.dogSlugs[0]) : null;
+    const cls = done ? "done" : open ? (current ? "now" : "open") : "locked";
+    const face = dog && open
+      ? `<img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">`
+      : iconSilhouette();
+    const status = !open ? "完成前面日子先開放" : done ? "再睇故事" : "今日可寫";
+    const jump = Math.min(cursor, ch.dayEnd);
+    const canJump = Boolean(started && open && jump >= ch.dayStart);
+    return `<button type="button" class="s2-chapter ${cls}" data-act="goto-day" data-day="${jump}" ${canJump ? "" : "disabled"}>
+      <span class="s2-ch-face">${face}</span>
+      <span class="s2-ch-body">
+        <b>${esc(ch.name)}</b>
+        <span>${esc(ch.blurb)}</span>
+        <small>${status} · 第 ${ch.dayStart}–${ch.dayEnd} 日</small>
+      </span>
+    </button>`;
+  }).join("");
+
+  let lead = "";
+  if (!started) {
+    lead = s1Complete(state)
+      ? "撳首頁「開始第二季探險」就可以寫字啦！"
+      : "完成第一季先開始第二季探險（而家可以預覽章節故事，唔可寫字）。";
+  } else if (s2Complete(state)) {
+    lead = "第二季完成 · 可溫習生字";
+  } else {
+    lead = `繼續探險 · 第 ${cursor} 日 · 已行 ${completed}/60 日`;
+  }
+
+  return `<div class="page map-page" data-screen="map">
+    <header class="top">${brandHtml(esc(pack.mapTitle || "第二季地圖"))}</header>
+    <p class="lead">${lead}</p>
+    <div class="s2-stages">${stages}</div>
+    <div class="s2-chapters">${chapters}</div>
+    ${s1Complete(state) && state.s2?.started ? '<p class="muted center"><button type="button" class="btn ghost tiny" data-act="switch-s1">睇返第一季進度</button></p>' : ""}
+  </div>`;
+}
+
+function renderMapS1(state) {
   const completed = new Set(state.completedDays);
   const unlockedDogs = unlockedDogCount(state.completedDays.length, dogs.length);
   const companion = dogBySlug(state.companion);
@@ -183,7 +302,6 @@ export function renderMap(state) {
     return { x, y, row, ltr, col };
   }
 
-  // Path through stone centres, with soft curves between rows
   const pts = [];
   for (let day = 1; day <= DAY_TOTAL; day += 1) {
     const { x, y } = stonePos(day);
@@ -194,7 +312,6 @@ export function renderMap(state) {
     const [x0, y0] = pts[i - 1];
     const [x1, y1] = pts[i];
     if (Math.abs(y1 - y0) > 10) {
-      // vertical snake turn between rows
       const midY = (y0 + y1) / 2;
       d += ` C ${x0} ${midY}, ${x1} ${midY}, ${x1} ${y1}`;
     } else {
@@ -230,7 +347,6 @@ export function renderMap(state) {
         <circle cx="0" cy="0" r="2.2" fill="#fff6c8"/>
       </g>`;
     }
-    // bone
     return `<g transform="translate(${x} ${y}) rotate(${(i * 37) % 40 - 20})" opacity="0.85">
       <rect x="-7" y="-2" width="14" height="4" rx="2" fill="#FBF6E9"/>
       <circle cx="-7" cy="-3" r="3" fill="#FBF6E9"/><circle cx="-7" cy="3" r="3" fill="#FBF6E9"/>
@@ -247,16 +363,11 @@ export function renderMap(state) {
     if (row % 4 === 2) decorations.push(decor(side === 18 ? W - 28 : 28, y + 18, "bone", row));
   }
 
-  // Week signposts: in the vertical gap above the week-start row, on the path-turn outer side
   const signs = [];
   for (let week = 1; week <= WEEK_TOTAL; week += 1) {
     const day = (week - 1) * 5 + 1;
     const { row, ltr } = stonePos(day);
-    // Midway between previous row and this row (clear of stone centres)
-    const sy = row === 0
-      ? 22
-      : topPad + row * rowH + 44 - Math.floor(rowH / 2);
-    // Outer turn side: LTR rows enter from left, RTL from right
+    const sy = row === 0 ? 22 : topPad + row * rowH + 44 - Math.floor(rowH / 2);
     const sx = ltr ? 34 : W - 34;
     signs.push(`<g class="week-sign" transform="translate(${sx} ${sy})">
       <rect x="-2" y="16" width="4" height="18" rx="2" fill="#8B5A2B"/>
@@ -272,7 +383,7 @@ export function renderMap(state) {
     const current = day === state.cursorDay;
     const locked = day > state.cursorDay && !done;
     const cls = done ? "done" : current ? "now" : locked ? "locked" : "todo";
-    const chars = dayChars(day).map((e) => e.char).join("");
+    const chars = dayChars(day, "s1").map((e) => e.char).join("");
     const marker = current
       ? `<span class="you-are-here"><img src="${esc(poseSrc(companion, "sit"))}" alt="${esc(companion.name)}"></span>`
       : "";
@@ -290,9 +401,6 @@ export function renderMap(state) {
         const dog = dogs[dogIndex];
         const open = dogIndex < unlockedDogs;
         const pos = stonePos(day);
-        // Place clearing outward from path
-        const clearX = pos.ltr && pos.col === 2 ? x - 70 : pos.ltr ? x + 70 : (pos.col === 0 ? x + 70 : x - 70);
-        // Prefer side with space
         let cx = pos.col === 1 ? (pos.ltr ? x + 78 : x - 78) : (pos.col === 0 ? x - 58 : x + 58);
         cx = Math.max(42, Math.min(W - 42, cx));
         const cy = y + 56;
@@ -311,6 +419,15 @@ export function renderMap(state) {
       }
     }
   }
+
+  const s2Preview = !state.s2?.started
+    ? `<section class="card s2-preview">
+        <h2>第二季探險地圖</h2>
+        <p class="muted">${s1Complete(state) ? "去首頁開始第二季探險！" : "完成第一季先可以開始寫第二季；而家可以預覽章節名。"}</p>
+        <ul class="s2-preview-list">${getChaptersPack().chapters.map((ch) => `<li><b>${esc(ch.name)}</b> · ${esc(ch.blurb)}</li>`).join("")}</ul>
+        ${s1Complete(state) ? '<button type="button" class="btn" data-act="start-s2">開始第二季探險</button>' : '<button type="button" class="btn ghost" data-act="preview-s2-map" disabled>完成第一季先寫第二季</button>'}
+      </section>`
+    : `<p class="muted center"><button type="button" class="btn ghost tiny" data-act="switch-s2">睇第二季地圖</button></p>`;
 
   return `<div class="page map-page" data-screen="map">
     <header class="top">${brandHtml("進度地圖")}</header>
@@ -332,8 +449,10 @@ export function renderMap(state) {
       </svg>
       <div class="trail-stones" style="height:${height}px">${stones.join("")}</div>
     </div>
+    ${s2Preview}
   </div>`;
 }
+
 
 function stageChips(current, stages = STAGES) {
   return stages.map((stage) => {
@@ -364,11 +483,12 @@ function reading(entry) {
 export function renderPractice(state) {
   const isWarmup = Boolean(state.active?.reviewSession);
   const isSingleReview = Boolean(state.active?.review) && !isWarmup;
+  const season = state.active?.season || activeSeason(state);
   const entry = isWarmup
-    ? characters.find((item) => item.char === state.active.queue[state.active.index])
+    ? (charactersS2.find((item) => item.char === state.active.queue[state.active.index]) || characters.find((item) => item.char === state.active.queue[state.active.index]))
     : isSingleReview
-      ? characters.find((item) => item.char === state.active.reviewChar)
-      : dayChars(state.active.day)[state.active.index];
+      ? (charactersS2.find((item) => item.char === state.active.reviewChar) || characters.find((item) => item.char === state.active.reviewChar))
+      : dayChars(state.active.day, season)[state.active.index];
   const stage = state.active.stage;
   const index = isSingleReview ? 1 : (isWarmup ? state.active.index + 1 : state.active.index + 1);
   const total = isSingleReview ? 1 : (isWarmup ? state.active.queue.length : 3);
@@ -456,7 +576,7 @@ function rewardCharsHtml(reward) {
   if (reward.kind === "warmup" && Array.isArray(reward.chars)) {
     list = reward.chars.map((ch) => characters.find((e) => e.char === ch)).filter(Boolean);
   } else if (reward.day) {
-    list = dayChars(reward.day);
+    list = dayChars(reward.day, reward.season === "s2" ? "s2" : "s1");
   }
   if (!list.length) return "";
   const bits = list.map((entry) =>
@@ -470,28 +590,49 @@ export function renderReward(state) {
   if (!reward) return renderHome(state);
   const companion = dogBySlug(reward.companion);
   const newbie = reward.newDog ? dogBySlug(reward.newDog) : null;
-  const star = newbie || companion;
+  const season = reward.season || "s1";
   const isWarmup = reward.kind === "warmup";
-  const more = !isWarmup && reward.day && reward.day < DAY_TOTAL;
+  const dayTotal = season === "s2" ? S2_DAY_TOTAL : DAY_TOTAL;
+  const more = !isWarmup && reward.day && reward.day < dayTotal;
   const ball = reward.ball ? dogBySlug(reward.ball) : null;
-  const kicker = isWarmup ? "溫習寫完喇！好叻呀！" : "今日寫完喇！好叻呀！";
-  const subtitle = isWarmup
-    ? "溫習 3 個字寫好咗，攞骨頭啦！"
-    : `第 ${reward.day} 日 3 個字都寫好咗，攞骨頭啦！`;
-  return `<div class="page reward" data-screen="reward">
-    <header class="top">${brandHtml()}${boneBadge(state)}</header>
-    <section class="card celebrate">
-      <p class="kicker">${kicker}</p>
-      <h1>${newbie ? `識到新朋友：${esc(newbie.name)}` : `${esc(companion.name)}好開心`}</h1>
-      <p class="muted">${subtitle}</p>
+  const star = newbie || companion;
+  const headline = isWarmup
+    ? "溫習完成！攞骨頭啦！"
+    : season === "s2" && reward.s2Complete
+      ? "第二季完成！汪汪探險隊收隊"
+      : season === "s2"
+        ? `探險第 ${reward.day} 日寫好喇！`
+        : `第 ${reward.day} 日 3 個字都寫好咗，攞骨頭啦！`;
+  let sub = "";
+  if (season === "s2" && reward.s2Complete) sub = "60 日探險完滿結束 · 全隊集合";
+  else if (season === "s2" && reward.newChapter) {
+    const ch = getChaptersPack().chapters.find((c) => c.id === reward.newChapter);
+    sub = ch?.unlockHint || "新章節開放！";
+  } else if (season === "s2" && reward.streakMilestone) {
+    sub = `連續 ${reward.streakMilestone} 日都有寫！貼紙送上～`;
+  }
+  const finaleClass = reward.playFinale ? " finale-pop" : "";
+  const photo = reward.s2Complete
+    ? `<img class="reward-photo finale-photo" src="${esc(poseSrc(dogBySlug("01-maomao-toy-poodle"), "expedition-b"))}" alt="毛毛收隊">`
+    : `<img class="reward-photo" src="${esc(poseSrc(star, "happy"))}" alt="${esc(star.name)}">`;
+  const streakBadge = reward.streakMilestone
+    ? `<p class="streak-badge">🔥 連寫 ${reward.streakMilestone} 日貼紙</p>`
+    : "";
+  return `<div class="page reward${finaleClass}" data-screen="reward">
+    <header class="top">${brandHtml(season === "s2" ? "探險獎勵" : "今日獎勵")}</header>
+    <section class="card reward-card">
+      <h1>${headline}</h1>
+      ${sub ? `<p class="muted">${esc(sub)}</p>` : ""}
+      ${streakBadge}
       ${rewardCharsHtml(reward)}
       ${boneEarnLine(reward)}
-      <img class="reward-photo" src="${esc(poseSrc(star, "happy"))}" alt="${esc(star.name)}">
-      <p class="breed">${esc(star.breed.zh)}</p>
-      ${ball ? `<div class="ball"><img src="${esc(poseSrc(ball, "ball"))}" alt="${esc(ball.name)}同綠色網球"><p>${esc(ball.name)}搵到隱藏波波！</p></div>` : ""}
+      ${photo}
+      ${newbie ? `<p class="new-dog">識咗新朋友：<b>${esc(newbie.name)}</b>！</p>` : ""}
+      ${ball ? `<p class="ball-unlock">隱藏波波相解鎖：${esc(ball.name)}</p>` : ""}
       <div class="actions">
+        ${more ? '<button type="button" class="btn" data-act="advance-start">下一日</button>' : ""}
+        <button type="button" class="btn ghost" data-act="share-card">分享卡</button>
         <button type="button" class="btn" data-act="home">返首頁</button>
-        ${more ? '<button type="button" class="btn ghost" data-act="advance-start">下一日 3 個字</button>' : '<button type="button" class="btn ghost" data-act="tab" data-tab="dogs">去睇狗狗</button>'}
       </div>
     </section>
   </div>`;
@@ -516,7 +657,7 @@ export function renderDogs(state) {
       <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
       <span class="dog-name">${esc(dog.name)}${fresh ? '<i class="pill">新</i>' : ""}</span>
       <span class="muted">${esc(dog.breed.zh)}</span>
-      <span class="album-prog">${prog}/7 相</span>
+      <span class="album-prog">${prog}/${albumPoseTotal()} 相</span>
       ${selected ? '<span class="pill mint">陪緊你</span>' : ""}
     </button>`;
   }).join("");
@@ -585,7 +726,7 @@ export function renderAlbum(state) {
       <img src="${esc(poseSrc(dog, "sit"))}" alt="${esc(dog.name)}">
       <div>
         <h1>${esc(dog.name)}</h1>
-        <p class="muted">${esc(dog.breed.zh)} · ${dogAlbumProgress(state, slug)}/7 相</p>
+        <p class="muted">${esc(dog.breed.zh)} · ${dogAlbumProgress(state, slug)}/${albumPoseTotal()} 相</p>
         ${selected
           ? '<span class="pill mint">陪緊你</span>'
           : `<button type="button" class="btn ghost tiny" data-act="pick-dog" data-slug="${esc(slug)}">揀佢陪我</button>`}
@@ -597,9 +738,11 @@ export function renderAlbum(state) {
 }
 
 export function renderCards(state) {
+  const season = activeSeason(state);
   const week = state.cardWeek || 1;
-  const list = weekChars(week);
-  const dots = Array.from({ length: WEEK_TOTAL }, (_, i) => {
+  const list = weekChars(week, season);
+  const weekTotal = season === "s2" ? S2_WEEK_TOTAL : WEEK_TOTAL;
+  const dots = Array.from({ length: weekTotal }, (_, i) => {
     const n = i + 1;
     return `<i class="${n === week ? "on" : ""}" data-act="card-week" data-week="${n}"></i>`;
   }).join("");
@@ -674,16 +817,33 @@ function cardDetailHtml(state) {
 }
 
 export function renderAbout(state) {
+  const sfxOn = isSfxEnabled();
   const rows = recordList(state);
   const body = rows.length
     ? `<table><caption>練習記錄（畀家長睇，唔係分數）</caption><thead><tr><th>字</th><th>提示次數</th></tr></thead><tbody>${rows.map((row) => `<tr><td class="kai">${esc(row.char)}</td><td>${row.hints}</td></tr>`).join("")}</tbody></table>`
     : '<p class="muted">未有記錄。寫完一個字就會記低。</p>';
+  const stickerLabels = {
+    "streak-3": "連寫 3 日",
+    "streak-7": "連寫 7 日",
+    "streak-14": "連寫 14 日",
+    "streak-30": "連寫 30 日",
+    "stage-prepare": "出發準備站",
+    "stage-city": "城市探險站",
+    "stage-nature": "自然奇遇站",
+    "stage-home": "家庭日常站",
+    "stage-school": "學校夢想站",
+    "finale": "第二季完季",
+  };
+  const s2Stickers = state.s2?.stickers || [];
+  const stickerHtml = s2Stickers.length
+    ? s2Stickers.map((id) => `<span class="sticker-pill">${esc(stickerLabels[id] || id)}</span>`).join("")
+    : '<p class="muted">未有貼紙。第二季連寫或完成階段就會出現。</p>';
   return `<div class="page about" data-screen="about">
     <header class="top">${brandHtml("關於我")}</header>
     <section class="card prose">
       <h1>汪汪中文</h1>
       <p>香港小學生用嘅筆順描紅練習。每日 3 個字，同小狗一齊寫。寫完攞骨頭換狗狗相。寫錯可以再試，冇愛心，冇扣分。</p>
-      <p>第一季 180 字（60 日）。筆順跟香港教育局《香港小學學習字詞表》建議次序；筆畫外形用開源資料。有出入嘅字已按教育局次序重排（出、母、的、來、飛）。</p>
+      <p>第一季 180 字（60 日）。第二季另有 180 字探險課（完成第一季後可寫）。筆順跟香港教育局《香港小學學習字詞表》建議次序；筆畫外形用開源資料。</p>
       <h2>鳴謝</h2>
       <ul>
         <li>字卡同例詞用「自由香港楷書」（自由香港字型，CC BY 4.0）。</li>
@@ -692,6 +852,19 @@ export function renderAbout(state) {
         <li>狗狗相係 AI 草稿，之後會換真實相片。</li>
       </ul>
       <p><a href="/licenses.txt">完整授權條款</a></p>
+    </section>
+    <section class="card prose stickers-card">
+      <h2>貼紙／徽章</h2>
+      <p class="muted">連寫同大階段貼紙（只獎唔罰；唔扣骨、唔鎖內容）。</p>
+      <div class="sticker-row">${stickerHtml}</div>
+    </section>
+    <section class="card prose sfx-settings">
+      <h2>短音</h2>
+      <p class="muted">完成日、骨頭、解鎖、連寫嘅短提示音（同粵語讀音分開）。</p>
+      <label class="sfx-toggle" for="sfx-toggle">
+        <input type="checkbox" id="sfx-toggle" data-act="toggle-sfx" ${sfxOn ? "checked" : ""}>
+        開啟短音
+      </label>
     </section>
     <section class="card prose voice-help">
       <h2>粵語讀音</h2>

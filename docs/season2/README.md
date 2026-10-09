@@ -1,7 +1,7 @@
 # 汪汪中文 · 第二季「汪汪探險隊」規劃（已對齊 Season 1）
 
 > 最後更新：2026-10-08  
-> 狀態：**主題保留**；已對齊 S1。D1–D13 已決定；EDB 全核完成（字表 v4）；讀音＝裝置 TTS。  
+> 狀態：**主題保留**；已對齊 S1。D1–D13 已決定；內容／資產優先，**程式暫緩至一次過開工**（見 `DECISIONS_AND_TODO.md`）。EDB 全核完成（字表 v4）；讀音＝裝置 TTS；SFX 資產已備。  
 > 衝突原文對照：`CONFLICTS.md`
 
 ---
@@ -26,6 +26,7 @@
 | [CHARACTERS_PHASE2_DRAFT.md](CHARACTERS_PHASE2_DRAFT.md) | S2 180 字草稿 **v4**（EDB 全核後） |
 | [CHARACTERS_PHASE2_EDB_PRECHECK.md](CHARACTERS_PHASE2_EDB_PRECHECK.md) | EDB 預核（已被全核取代） |
 | [CHARACTERS_PHASE2_EDB_VERIFICATION.md](CHARACTERS_PHASE2_EDB_VERIFICATION.md) | EDB 筆順全核報告（2026-10-08） |
+| [EXPEDITION_PHOTOS_BRIEF.md](EXPEDITION_PHOTOS_BRIEF.md) | 探險相 30 張需求表（brief-ready） |
 
 ---
 

@@ -5,3 +5,5 @@
 - 未拍板 D3／D7 前，呢度只當企劃參考，唔當 production 路徑。
 
 - `share-card-templates/`：第二季分享卡視覺樣板（每日／章節日記／完季），見該夾 README。
+
+- 探險相完整需求表（30 張規格）：[`../EXPEDITION_PHOTOS_BRIEF.md`](../EXPEDITION_PHOTOS_BRIEF.md)（brief-ready；未出圖）。

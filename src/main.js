@@ -7,6 +7,8 @@ import {
   warmVoices,
   whenVoicesReady,
 } from "./audio.js";
+import { playRewardSfx, playSfx, setSfxEnabled } from "./sfx.js";
+import { downloadShareCard, sharePayloadFromReward } from "./shareCard.js";
 import { destroyPractice, mountPractice } from "./practice.js";
 import "./styles.css";
 import {
@@ -30,8 +32,11 @@ import {
   saveState,
   setCardWeek,
   startPractice,
+  startSeason2,
   startWarmup,
+  switchSeason,
   goNextStage,
+  S2_DAY_TOTAL,
 } from "./state.js";
 import { findChar } from "./chars.js";
 import { dogBySlug, dogs } from "./dogs.js";
@@ -90,6 +95,24 @@ function titleFor(screen) {
   return "汪汪中文";
 }
 
+
+/** Call only from a user gesture after completing a day / warmup. */
+function cueRewardSfx() {
+  const reward = state.pendingReward;
+  if (!reward) return;
+  playRewardSfx({
+    bonesEarned: reward.bonesEarned || [],
+    newDog: reward.newDog,
+    ball: reward.ball,
+  });
+  if (reward.streakMilestone) {
+    setTimeout(() => playSfx("streak"), 420);
+  }
+  if (reward.playFinale) {
+    setTimeout(() => playSfx("unlock"), 500);
+  }
+}
+
 function render() {
   const pass = ++renderLock;
   stopAudio();
@@ -103,7 +126,7 @@ function render() {
     markDogsSeen(state);
     if ((state.seenDogs || []).join(",") !== before) saveState(state);
   }
-  if (state.screen === "map") {
+  if (state.screen === "map" && state.season !== "s2") {
     requestAnimationFrame(() => {
       const el = document.querySelector(`[data-stone="${state.cursorDay}"]`);
       if (el) el.scrollIntoView({ block: "center", behavior: "smooth" });
@@ -300,7 +323,14 @@ function onClick(event) {
   }
   if (act === "goto-day") {
     const day = Number(button.dataset.day);
-    if (day >= 1 && day <= state.cursorDay) {
+    if (state.season === "s2") {
+      if (state.s2?.started && day >= 1 && day <= state.s2.cursorDay) {
+        state.s2.cursorDay = day;
+        show("home");
+      } else if (!state.s2?.started) {
+        toast(state.completedDays.length >= 60 ? "先去首頁開始第二季探險" : "完成第一季先可以寫第二季（而家只係預覽）");
+      }
+    } else if (day >= 1 && day <= state.cursorDay) {
       state.cursorDay = day;
       show("home");
     }
@@ -315,7 +345,8 @@ function onClick(event) {
     button.disabled = true;
     goNextStage(state);
     show(state.screen);
-    speakListenIfNeeded();
+    if (state.screen === "reward") cueRewardSfx();
+    else speakListenIfNeeded();
     return;
   }
   if (act === "retry") {
@@ -347,6 +378,14 @@ function onClick(event) {
     show("home");
     return;
   }
+  if (act === "toggle-sfx") {
+    // Handler is on the checkbox; label "for" synthesizes one click on the input.
+    if (event.target !== button) return;
+    const on = Boolean(button.checked);
+    setSfxEnabled(on);
+    if (on) playSfx("complete");
+    return;
+  }
   if (act === "reward") {
     if (state.pendingReward) show("reward");
     return;
@@ -362,6 +401,7 @@ function onClick(event) {
   }
   if (act === "buy-pose") {
     if (buyPose(state, button.dataset.slug, button.dataset.pose)) {
+      playSfx("unlock");
       refresh();
       toast("換到新相喇！");
     } else {
@@ -379,6 +419,37 @@ function onClick(event) {
       refresh();
       toast(`${dogBySlug(state.companion).name}會陪你寫字！`);
     }
+    return;
+  }
+  if (act === "start-s2") {
+    if (startSeason2(state)) {
+      playSfx("unlock");
+      show("home");
+      toast("第二季探險開始！");
+    } else {
+      toast("完成第一季先可以開始第二季。");
+    }
+    return;
+  }
+  if (act === "switch-s1") {
+    switchSeason(state, "s1");
+    show("home");
+    return;
+  }
+  if (act === "switch-s2") {
+    if (switchSeason(state, "s2")) show("home");
+    else toast("完成第一季先。");
+    return;
+  }
+  if (act === "share-card") {
+    const payload = sharePayloadFromReward(state.pendingReward, state);
+    if (!payload) {
+      toast("未有可分享內容。");
+      return;
+    }
+    downloadShareCard(payload).then((ok) => {
+      toast(ok ? "分享卡已儲存／下載" : "無法產生分享卡");
+    });
     return;
   }
   if (act === "locked-dog") {
@@ -436,7 +507,7 @@ if (enableTestHooks) {
     show,
     startPractice: () => { startPractice(state); show("practice"); },
     startWarmup: () => { startWarmup(state); show("practice"); },
-    goNextStage: () => { goNextStage(state); show(state.screen); },
+    goNextStage: () => { goNextStage(state); show(state.screen); if (state.screen === "reward") cueRewardSfx(); },
     advanceDay: () => { advanceDay(state); show("home"); },
     completeDays(n) {
       for (let i = 1; i <= n; i += 1) {
@@ -445,6 +516,25 @@ if (enableTestHooks) {
       state.cursorDay = Math.min(n + 1, 60);
       const u = unlockedDogCount(state.completedDays.length, dogs.length);
       dogs.slice(0, u).forEach((d) => { state.album[d.slug].sit = true; });
+      saveState(state);
+      render();
+    },
+    startSeason2() {
+      startSeason2(state);
+      saveState(state);
+      render();
+    },
+    completeS2Days(n) {
+      if (!state.s2.started) startSeason2(state);
+      for (let i = 1; i <= n; i += 1) {
+        if (!state.s2.completedDays.includes(i)) state.s2.completedDays.push(i);
+      }
+      state.s2.cursorDay = Math.min(n + 1, S2_DAY_TOTAL);
+      state.s2.unlockedChapters = Array.from(
+        { length: Math.min(15, 1 + Math.floor(state.s2.completedDays.length / 4)) },
+        (_, i) => `ch${String(i + 1).padStart(2, "0")}`,
+      );
+      state.season = "s2";
       saveState(state);
       render();
     },
@@ -483,5 +573,7 @@ if (enableTestHooks) {
     hasCantoneseVoice,
     whenVoicesReady,
     playReading: (entry, opts) => playReading(entry, opts),
+    playSfx: (name) => playSfx(name),
+    setSfxEnabled: (on) => setSfxEnabled(on),
   };
 }
